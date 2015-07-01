@@ -1,0 +1,32 @@
+﻿// test0
+module Something {
+    struct Vec2 {
+        x: float;
+        y: float;
+    };
+
+    record Vec3 {
+        x: float[];
+        y: float[][];
+        z: (x: float, b: float) -> float;
+        z2: (x: float, b: float) -> (x1: float, y1: float) -> float;
+    };
+
+    union Un01 {
+        x: unit;
+        y: unit;
+        z: unit;
+    };
+
+    module Nested {
+        union N {
+            M:;
+        };
+
+        record Vec3 {
+            x: float;
+            y: float;
+            z: float;
+        };        
+    };
+};

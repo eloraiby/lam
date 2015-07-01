@@ -1,0 +1,112 @@
+﻿//
+// Lam Reference Compiler
+// Copyright (C) 2015  Wael El Oraiby
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+%{
+open RawAst
+open System
+%}
+
+%start start
+
+%token <Node>       SINT64
+%token <Node>       REAL64
+%token <Node>       STRING
+%token <Node>       CHAR
+%token <Identifier> IDENTIFIER
+%token <Node>       TRUE
+%token <Node>       FALSE
+%token <TokenInfo>  LEFT_BRACE
+%token <TokenInfo>  RIGHT_BRACE
+%token <TokenInfo>  LEFT_BRACK
+%token <TokenInfo>  RIGHT_BRACK
+%token <TokenInfo>  LEFT_PAREN
+%token <TokenInfo>  RIGHT_PAREN
+%token <TokenInfo>  LEFT_HASH
+%token <TokenInfo>  RIGHT_HASH
+%token <TokenInfo>  COMMA
+%token <TokenInfo>  COL
+%token <TokenInfo>  DOT
+%token <TokenInfo>  SC
+%token <TokenInfo>  YIELD
+%token <TokenInfo>  KW_STRUCT
+%token <TokenInfo>  KW_RECORD
+%token <TokenInfo>  KW_UNION
+%token <TokenInfo>  KW_MODULE
+%token <TokenInfo>  KW_FN
+%token <TokenInfo>  KW_ALIAS
+%token <TokenInfo>  KW_OPEN
+
+
+%token EOF
+%type <Node list>   start
+%type <Node>        decl
+%type <Node list>   decl_list
+
+%%
+
+start       : document                      { $1 }
+
+document    : EOF                           { [] }
+            | decl_list                     { List.rev $1 }
+
+Struct      : KW_STRUCT identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Struct ($2, List.rev $4) }
+            | KW_STRUCT identifier LEFT_BRACE RIGHT_BRACE               { raise (Exception (sprintf "Structs cannot be empty: struct %s" (fst $2))) }
+
+Record      : KW_RECORD identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Record ($2, List.rev $4) }
+            | KW_RECORD identifier LEFT_BRACE            RIGHT_BRACE    { Node.Record ($2, []) }
+
+Union       : KW_UNION  identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Union  ($2, List.rev $4) }
+            | KW_UNION  identifier LEFT_BRACE            RIGHT_BRACE    { raise (Exception (sprintf "Unions cannot be empty: union %s" (fst $2))) }
+
+Module      : KW_MODULE identifier LEFT_BRACE decl_list  RIGHT_BRACE    { Node.Module ($2, List.rev $4) }
+            | KW_MODULE identifier LEFT_BRACE            RIGHT_BRACE    { Node.Module ($2, []) }
+
+Alias       : KW_ALIAS path path                                        { Node.Alias ($2, $3) }
+
+Open        : KW_OPEN path                                              { Node.Open $2 }
+
+decl        : Struct                        { $1 }
+            | Record                        { $1 }
+            | Union                         { $1 }
+            | Module                        { $1 }
+
+decl_list   : decl SC                       { [ $1 ] }
+            | decl_list decl SC             { $2 :: $1 }
+
+field       : identifier COL atype          { { Field.Identifier = $1; Type = $3 } }
+            | identifier COL                { raise (Exception (sprintf "a 'type' is required after '%s :'" (fst $1))) }
+            | identifier                    { raise (Exception (sprintf "a ': type' is required after '%s'" (fst $1))) }
+
+field_list  : field SC                      { [ $1 ] }
+            | field_list field SC           { $2 :: $1 }
+
+array_type  : atype LEFT_BRACK RIGHT_BRACK  { Type.Array $1 }
+
+atype       : path                          { Type.Path (List.rev $1) }
+            | array_type                    { $1}
+            | func_type                     { Type.Function $1 }
+
+func_type   : LEFT_PAREN fun_args RIGHT_PAREN YIELD atype    { ($5, List.rev $2) }
+
+fun_args    : field                         { [ $1 ] }
+            | fun_args COMMA field          { $3 :: $1 }
+
+
+identifier  : IDENTIFIER                    { $1 }
+
+path        : identifier                    { [ $1 ] }
+            | path DOT identifier           { $3 :: $1 }

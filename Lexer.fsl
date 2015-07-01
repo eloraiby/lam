@@ -1,0 +1,93 @@
+﻿{
+//
+// Lam Reference Compiler
+// Copyright (C) 2015  Wael El Oraiby
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+module Lexer
+
+open Microsoft.FSharp.Text.Lexing
+open System
+open Parser
+open RawAst
+
+let lexeme = LexBuffer<_>.LexemeString
+
+let newline (lexbuf: LexBuffer<_>) =
+    lexbuf.EndPos <- lexbuf.EndPos.NextLine
+
+let position (file, p: Position) =
+    { TokenInfo.FileName = file; Line = p.Line; Column = p.Column; Offset = p.AbsoluteOffset }
+}
+
+let int64   = ['-' '+']? ['0'-'9']+
+let digit   = ['0'-'9']
+let alpha   = ['a'-'z'] | ['A'-'Z']
+let special = '_'
+let op      = ['+' '-' '~' '*' '/' '%' '|' '&' '!' '^' '=' '<' '>']
+let identifier  = (alpha | special) (alpha | special | digit)*
+let op_sym  = op+
+let floatp  = digit+ '.' digit*
+let floate  = digit+ ('.' digit* )? ('e'| 'E') ['+' '-']? digit+
+let real64  = ['-' '+']? (floatp | floate)
+let white	= [' ' '\t']+
+let newline = '\n' | ('\r' '\n')
+
+rule read filename istream =
+    parse
+    | white         { read filename istream lexbuf }
+    | newline       { newline lexbuf; read filename istream lexbuf }
+    | real64        { REAL64 (Node.ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | int64         { SINT64 (Node.ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | "true"        { TRUE   (Node.ConstBool   (true                        , position(filename, lexbuf.EndPos))) }
+    | "false"       { FALSE  (Node.ConstBool   (false                       , position(filename, lexbuf.EndPos))) }
+    | "//" op_sym*  { read_line_comment filename istream lexbuf }
+    | "struct"      { KW_STRUCT   (position(filename, lexbuf.EndPos)) }
+    | "record"      { KW_RECORD   (position(filename, lexbuf.EndPos)) }
+    | "union"       { KW_UNION    (position(filename, lexbuf.EndPos)) }
+    | "module"      { KW_MODULE   (position(filename, lexbuf.EndPos)) }
+    | "fn"          { KW_FN       (position(filename, lexbuf.EndPos)) }
+    | "alias"       { KW_ALIAS    (position(filename, lexbuf.EndPos)) }
+    | "open"        { KW_OPEN     (position(filename, lexbuf.EndPos)) }
+    | "->"          { YIELD       (position(filename, lexbuf.EndPos)) }
+    | op_sym        { IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) }
+    | identifier    { IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) }
+    | '"'           { read_string filename istream "" false lexbuf }
+    | '{'           { LEFT_BRACE  (position(filename, lexbuf.EndPos)) }
+    | '}'           { RIGHT_BRACE (position(filename, lexbuf.EndPos)) }
+    | '['           { LEFT_BRACK  (position(filename, lexbuf.EndPos)) }
+    | ']'           { RIGHT_BRACK (position(filename, lexbuf.EndPos)) }
+    | '('           { LEFT_PAREN  (position(filename, lexbuf.EndPos)) }
+    | ')'           { RIGHT_PAREN (position(filename, lexbuf.EndPos)) }
+    | ';'           { SC          (position(filename, lexbuf.EndPos)) }
+    | ','           { COMMA       (position(filename, lexbuf.EndPos)) }
+    | '.'           { DOT         (position(filename, lexbuf.EndPos)) }
+    | ':'           { COL         (position(filename, lexbuf.EndPos)) }
+    | eof           { EOF }
+    | _             { raise (Exception (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.EndPos.Line) lexbuf.EndPos.Column)) }
+
+and read_string filename istream str ignorequote =
+    parse
+    | '"'           { if ignorequote then (read_string filename istream (str+"\\\"") false lexbuf)
+                      else STRING (Node.ConstString (str, position(filename, lexbuf.EndPos))) }
+    | '\\'          { read_string filename istream str true lexbuf }
+    | [^ '"' '\\']+ { read_string filename istream (str + (lexeme lexbuf)) false lexbuf }
+    | eof           { raise (Exception ("String is not terminated")) }
+
+and read_line_comment filename istream =
+    parse
+    | newline       { read filename istream lexbuf }
+    | _             { read_line_comment filename istream lexbuf }
+{ }
