@@ -20,7 +20,7 @@ module Something {
 
     module Nested {
         union N {
-            M:;
+            M: y;
         };
 
         record Vec3 {
@@ -29,4 +29,8 @@ module Something {
             z: float;
         };        
     };
+};
+
+struct GS {
+    x: int;
 };

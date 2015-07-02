@@ -22,13 +22,13 @@ type token =
   | LEFT_BRACK of (TokenInfo)
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
-  | FALSE of (Node)
-  | TRUE of (Node)
+  | FALSE of (Declaration)
+  | TRUE of (Declaration)
   | IDENTIFIER of (Identifier)
-  | CHAR of (Node)
-  | STRING of (Node)
-  | REAL64 of (Node)
-  | SINT64 of (Node)
+  | CHAR of (Declaration)
+  | STRING of (Declaration)
+  | REAL64 of (Declaration)
+  | SINT64 of (Declaration)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_KW_OPEN
@@ -91,4 +91,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> (Node list) 
+val start : (Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> (Declaration list) 

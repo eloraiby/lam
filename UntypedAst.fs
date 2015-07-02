@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-module RawAst
+module UntypedAst
 
 open System
 
@@ -63,16 +63,34 @@ type ConstSInt64    = Int64 * TokenInfo
 type ConstReal64    = double * TokenInfo
 type ConstString    = string * TokenInfo
 
-type Node =
+type Value  =
+    | ConstBool     of ConstBool
+    | ConstChar     of ConstChar
+    | ConstSInt64   of ConstSInt64
+    | ConstReal64   of ConstReal64
+    | ConstString   of ConstString
+    | Identifier    of Identifier
+
+type Declaration =
     | Alias     of Path * Path
     | Open      of Path
     | Struct    of Identifier * (Field list)
     | Record    of Identifier * (Field list)
     | Union     of Identifier * (Field list)
-    | Function  of Identifier * FuncType
+    | Function  of Identifier * FuncType * ((Expr list) option)
     | ConstBool     of ConstBool
     | ConstChar     of ConstChar
     | ConstString   of ConstString
     | ConstSInt64   of ConstSInt64
     | ConstReal64   of ConstReal64
-    | Module    of Identifier * Node list
+    | Module    of Identifier * (Declaration list)
+
+and Expr =
+    | If        of Expr * Expr * Expr
+    | Let       of Identifier list * Expr
+    | Apply     of Identifier * (Expr list)
+    | Value     of Value
+
+
+
+

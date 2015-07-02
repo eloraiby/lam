@@ -15,20 +15,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+//
+// Note: This file complexity is going to be reduced and the error handling is
+//       going to be far improved.
+//
 %{
-open RawAst
+open UntypedAst
 open System
 %}
 
 %start start
 
-%token <Node>       SINT64
-%token <Node>       REAL64
-%token <Node>       STRING
-%token <Node>       CHAR
+%token <Declaration> SINT64
+%token <Declaration> REAL64
+%token <Declaration> STRING
+%token <Declaration> CHAR
 %token <Identifier> IDENTIFIER
-%token <Node>       TRUE
-%token <Node>       FALSE
+%token <Declaration> TRUE
+%token <Declaration> FALSE
 %token <TokenInfo>  LEFT_BRACE
 %token <TokenInfo>  RIGHT_BRACE
 %token <TokenInfo>  LEFT_BRACK
@@ -52,9 +57,9 @@ open System
 
 
 %token EOF
-%type <Node list>   start
-%type <Node>        decl
-%type <Node list>   decl_list
+%type <Declaration list>   start
+%type <Declaration>        decl
+%type <Declaration list>   decl_list
 
 %%
 
@@ -63,21 +68,21 @@ start       : document                      { $1 }
 document    : EOF                           { [] }
             | decl_list                     { List.rev $1 }
 
-Struct      : KW_STRUCT identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Struct ($2, List.rev $4) }
+Struct      : KW_STRUCT identifier LEFT_BRACE field_list RIGHT_BRACE    { Struct ($2, List.rev $4) }
             | KW_STRUCT identifier LEFT_BRACE RIGHT_BRACE               { raise (Exception (sprintf "Structs cannot be empty: struct %s" (fst $2))) }
 
-Record      : KW_RECORD identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Record ($2, List.rev $4) }
-            | KW_RECORD identifier LEFT_BRACE            RIGHT_BRACE    { Node.Record ($2, []) }
+Record      : KW_RECORD identifier LEFT_BRACE field_list RIGHT_BRACE    { Record ($2, List.rev $4) }
+            | KW_RECORD identifier LEFT_BRACE            RIGHT_BRACE    { Record ($2, []) }
 
-Union       : KW_UNION  identifier LEFT_BRACE field_list RIGHT_BRACE    { Node.Union  ($2, List.rev $4) }
+Union       : KW_UNION  identifier LEFT_BRACE field_list RIGHT_BRACE    { Union  ($2, List.rev $4) }
             | KW_UNION  identifier LEFT_BRACE            RIGHT_BRACE    { raise (Exception (sprintf "Unions cannot be empty: union %s" (fst $2))) }
 
-Module      : KW_MODULE identifier LEFT_BRACE decl_list  RIGHT_BRACE    { Node.Module ($2, List.rev $4) }
-            | KW_MODULE identifier LEFT_BRACE            RIGHT_BRACE    { Node.Module ($2, []) }
+Module      : KW_MODULE identifier LEFT_BRACE decl_list  RIGHT_BRACE    { Module ($2, List.rev $4) }
+            | KW_MODULE identifier LEFT_BRACE            RIGHT_BRACE    { Module ($2, []) }
 
-Alias       : KW_ALIAS path path                                        { Node.Alias ($2, $3) }
+Alias       : KW_ALIAS path path                                        { Alias ($2, $3) }
 
-Open        : KW_OPEN path                                              { Node.Open $2 }
+Open        : KW_OPEN path                                              { Open $2 }
 
 decl        : Struct                        { $1 }
             | Record                        { $1 }
@@ -110,3 +115,5 @@ identifier  : IDENTIFIER                    { $1 }
 
 path        : identifier                    { [ $1 ] }
             | path DOT identifier           { $3 :: $1 }
+
+//func        : KW_FN identifier func_type func_body { }
