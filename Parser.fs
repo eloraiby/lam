@@ -33,12 +33,12 @@ type token =
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
   | IDENTIFIER of (Identifier)
-  | FALSE of (Value)
-  | TRUE of (Value)
-  | CHAR of (Value)
-  | STRING of (Value)
-  | REAL64 of (Value)
-  | SINT64 of (Value)
+  | FALSE of (Expr)
+  | TRUE of (Expr)
+  | CHAR of (Expr)
+  | STRING of (Expr)
+  | REAL64 of (Expr)
+  | SINT64 of (Expr)
 // This type is used to give symbolic names to token indexes, useful for error messages
 type tokenId = 
     | TOKEN_EOF

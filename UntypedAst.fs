@@ -63,14 +63,6 @@ type ConstSInt64    = Int64 * TokenInfo
 type ConstReal64    = double * TokenInfo
 type ConstString    = string * TokenInfo
 
-type Value  =
-    | ConstBool     of ConstBool
-    | ConstChar     of ConstChar
-    | ConstSInt64   of ConstSInt64
-    | ConstReal64   of ConstReal64
-    | ConstString   of ConstString
-    | Identifier    of Identifier
-
 type Declaration =
     | Alias     of Path * Path
     | Open      of Path
@@ -87,9 +79,14 @@ type Declaration =
 
 and Expr =
     | If        of Expr * Expr * Expr
-    | Let       of Identifier list * Expr
-    | Apply     of Identifier * (Expr list)
-    | Value     of Value
+    | Let       of (Identifier list) * (Expr list) * (Expr list)
+    | Apply     of Identifier * (Expr list) // struct/unions/.../function calls and variables
+    | UnitValue
+    | Bool      of ConstBool
+    | Char      of ConstChar
+    | SInt64    of ConstSInt64
+    | Real64    of ConstReal64
+    | String    of ConstString
 
 
 

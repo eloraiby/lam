@@ -27,12 +27,12 @@ open System
 
 %start start
 
-%token <Value> SINT64
-%token <Value> REAL64
-%token <Value> STRING
-%token <Value> CHAR
-%token <Value> TRUE
-%token <Value> FALSE
+%token <Expr> SINT64
+%token <Expr> REAL64
+%token <Expr> STRING
+%token <Expr> CHAR
+%token <Expr> TRUE
+%token <Expr> FALSE
 
 %token <Identifier> IDENTIFIER
 
