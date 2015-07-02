@@ -27,13 +27,15 @@ open System
 
 %start start
 
-%token <Declaration> SINT64
-%token <Declaration> REAL64
-%token <Declaration> STRING
-%token <Declaration> CHAR
+%token <Value> SINT64
+%token <Value> REAL64
+%token <Value> STRING
+%token <Value> CHAR
+%token <Value> TRUE
+%token <Value> FALSE
+
 %token <Identifier> IDENTIFIER
-%token <Declaration> TRUE
-%token <Declaration> FALSE
+
 %token <TokenInfo>  LEFT_BRACE
 %token <TokenInfo>  RIGHT_BRACE
 %token <TokenInfo>  LEFT_BRACK

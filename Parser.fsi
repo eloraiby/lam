@@ -22,13 +22,13 @@ type token =
   | LEFT_BRACK of (TokenInfo)
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
-  | FALSE of (Declaration)
-  | TRUE of (Declaration)
   | IDENTIFIER of (Identifier)
-  | CHAR of (Declaration)
-  | STRING of (Declaration)
-  | REAL64 of (Declaration)
-  | SINT64 of (Declaration)
+  | FALSE of (Value)
+  | TRUE of (Value)
+  | CHAR of (Value)
+  | STRING of (Value)
+  | REAL64 of (Value)
+  | SINT64 of (Value)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_KW_OPEN
@@ -51,9 +51,9 @@ type tokenId =
     | TOKEN_LEFT_BRACK
     | TOKEN_RIGHT_BRACE
     | TOKEN_LEFT_BRACE
+    | TOKEN_IDENTIFIER
     | TOKEN_FALSE
     | TOKEN_TRUE
-    | TOKEN_IDENTIFIER
     | TOKEN_CHAR
     | TOKEN_STRING
     | TOKEN_REAL64

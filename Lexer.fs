@@ -244,22 +244,22 @@ and _fslex_read filename istream _fslex_state lexbuf =
           )
   | 2 -> ( 
 # 52 "Lexer.fsl"
-                                     REAL64 (ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) 
+                                     REAL64 (Value.ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) 
 # 248 "Lexer.fs"
           )
   | 3 -> ( 
 # 53 "Lexer.fsl"
-                                     SINT64 (ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) 
+                                     SINT64 (Value.ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) 
 # 253 "Lexer.fs"
           )
   | 4 -> ( 
 # 54 "Lexer.fsl"
-                                     TRUE   (ConstBool   (true                        , position(filename, lexbuf.EndPos))) 
+                                     TRUE   (Value.ConstBool   (true                        , position(filename, lexbuf.EndPos))) 
 # 258 "Lexer.fs"
           )
   | 5 -> ( 
 # 55 "Lexer.fsl"
-                                     FALSE  (ConstBool   (false                       , position(filename, lexbuf.EndPos))) 
+                                     FALSE  (Value.ConstBool   (false                       , position(filename, lexbuf.EndPos))) 
 # 263 "Lexer.fs"
           )
   | 6 -> ( 
@@ -389,7 +389,7 @@ and _fslex_read_string filename istream str ignorequote _fslex_state lexbuf =
   | 0 -> ( 
 # 83 "Lexer.fsl"
                                      if ignorequote then (read_string filename istream (str+"\\\"") false lexbuf)
-                                     else STRING (ConstString (str, position(filename, lexbuf.EndPos))) 
+                                     else STRING (Value.ConstString (str, position(filename, lexbuf.EndPos))) 
 # 393 "Lexer.fs"
           )
   | 1 -> ( 

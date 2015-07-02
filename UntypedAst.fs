@@ -78,11 +78,11 @@ type Declaration =
     | Record    of Identifier * (Field list)
     | Union     of Identifier * (Field list)
     | Function  of Identifier * FuncType * ((Expr list) option)
-    | ConstBool     of ConstBool
-    | ConstChar     of ConstChar
-    | ConstString   of ConstString
-    | ConstSInt64   of ConstSInt64
-    | ConstReal64   of ConstReal64
+    | ConstBool     of Identifier * ConstBool
+    | ConstChar     of Identifier * ConstChar
+    | ConstString   of Identifier * ConstString
+    | ConstSInt64   of Identifier * ConstSInt64
+    | ConstReal64   of Identifier * ConstReal64
     | Module    of Identifier * (Declaration list)
 
 and Expr =

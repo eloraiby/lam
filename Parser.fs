@@ -32,13 +32,13 @@ type token =
   | LEFT_BRACK of (TokenInfo)
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
-  | FALSE of (Declaration)
-  | TRUE of (Declaration)
   | IDENTIFIER of (Identifier)
-  | CHAR of (Declaration)
-  | STRING of (Declaration)
-  | REAL64 of (Declaration)
-  | SINT64 of (Declaration)
+  | FALSE of (Value)
+  | TRUE of (Value)
+  | CHAR of (Value)
+  | STRING of (Value)
+  | REAL64 of (Value)
+  | SINT64 of (Value)
 // This type is used to give symbolic names to token indexes, useful for error messages
 type tokenId = 
     | TOKEN_EOF
@@ -62,9 +62,9 @@ type tokenId =
     | TOKEN_LEFT_BRACK
     | TOKEN_RIGHT_BRACE
     | TOKEN_LEFT_BRACE
+    | TOKEN_IDENTIFIER
     | TOKEN_FALSE
     | TOKEN_TRUE
-    | TOKEN_IDENTIFIER
     | TOKEN_CHAR
     | TOKEN_STRING
     | TOKEN_REAL64
@@ -117,9 +117,9 @@ let tagOfToken (t:token) =
   | LEFT_BRACK _ -> 18 
   | RIGHT_BRACE _ -> 19 
   | LEFT_BRACE _ -> 20 
-  | FALSE _ -> 21 
-  | TRUE _ -> 22 
-  | IDENTIFIER _ -> 23 
+  | IDENTIFIER _ -> 21 
+  | FALSE _ -> 22 
+  | TRUE _ -> 23 
   | CHAR _ -> 24 
   | STRING _ -> 25 
   | REAL64 _ -> 26 
@@ -149,9 +149,9 @@ let tokenTagToTokenId (tokenIdx:int) =
   | 18 -> TOKEN_LEFT_BRACK 
   | 19 -> TOKEN_RIGHT_BRACE 
   | 20 -> TOKEN_LEFT_BRACE 
-  | 21 -> TOKEN_FALSE 
-  | 22 -> TOKEN_TRUE 
-  | 23 -> TOKEN_IDENTIFIER 
+  | 21 -> TOKEN_IDENTIFIER 
+  | 22 -> TOKEN_FALSE 
+  | 23 -> TOKEN_TRUE 
   | 24 -> TOKEN_CHAR 
   | 25 -> TOKEN_STRING 
   | 26 -> TOKEN_REAL64 
@@ -227,9 +227,9 @@ let token_to_string (t:token) =
   | LEFT_BRACK _ -> "LEFT_BRACK" 
   | RIGHT_BRACE _ -> "RIGHT_BRACE" 
   | LEFT_BRACE _ -> "LEFT_BRACE" 
+  | IDENTIFIER _ -> "IDENTIFIER" 
   | FALSE _ -> "FALSE" 
   | TRUE _ -> "TRUE" 
-  | IDENTIFIER _ -> "IDENTIFIER" 
   | CHAR _ -> "CHAR" 
   | STRING _ -> "STRING" 
   | REAL64 _ -> "REAL64" 
@@ -259,9 +259,9 @@ let _fsyacc_dataOfToken (t:token) =
   | LEFT_BRACK _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | RIGHT_BRACE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | LEFT_BRACE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
+  | IDENTIFIER _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | FALSE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | TRUE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
-  | IDENTIFIER _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | CHAR _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | STRING _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | REAL64 _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
@@ -271,7 +271,7 @@ let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 5us; 10us; 15us; 20us; 
 let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 1us; 1us; 1us; 2us; 2us; 3us; 19us; 2us; 4us; 5us; 2us; 4us; 5us; 2us; 4us; 5us; 2us; 4us; 24us; 1us; 4us; 1us; 5us; 2us; 6us; 7us; 2us; 6us; 7us; 2us; 6us; 7us; 2us; 6us; 24us; 1us; 6us; 1us; 7us; 2us; 8us; 9us; 2us; 8us; 9us; 2us; 8us; 9us; 2us; 8us; 24us; 1us; 8us; 1us; 9us; 2us; 10us; 11us; 2us; 10us; 11us; 2us; 10us; 11us; 2us; 10us; 19us; 1us; 10us; 1us; 11us; 1us; 14us; 1us; 15us; 1us; 16us; 1us; 17us; 1us; 18us; 1us; 18us; 1us; 19us; 1us; 19us; 3us; 20us; 21us; 22us; 2us; 20us; 21us; 2us; 20us; 25us; 1us; 23us; 1us; 23us; 1us; 24us; 1us; 24us; 2us; 25us; 29us; 1us; 25us; 1us; 25us; 2us; 26us; 34us; 1us; 27us; 1us; 28us; 1us; 29us; 2us; 29us; 31us; 1us; 29us; 1us; 29us; 1us; 30us; 1us; 31us; 1us; 31us; 1us; 32us; 1us; 33us; 1us; 34us; 1us; 34us; |]
 let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 6us; 8us; 11us; 14us; 17us; 20us; 23us; 25us; 27us; 30us; 33us; 36us; 39us; 41us; 43us; 46us; 49us; 52us; 55us; 57us; 59us; 62us; 65us; 68us; 71us; 73us; 75us; 77us; 79us; 81us; 83us; 85us; 87us; 89us; 91us; 95us; 98us; 101us; 103us; 105us; 107us; 109us; 112us; 114us; 116us; 119us; 121us; 123us; 125us; 128us; 130us; 132us; 134us; 136us; 138us; 140us; 142us; 144us; |]
 let _fsyacc_action_rows = 61
-let _fsyacc_actionTableElements = [|5us; 32768us; 0us; 3us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 0us; 49152us; 0us; 16385us; 0us; 16386us; 4us; 16387us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 1us; 32768us; 23us; 57us; 1us; 32768us; 20us; 7us; 2us; 32768us; 19us; 10us; 23us; 57us; 2us; 32768us; 19us; 9us; 23us; 57us; 0us; 16388us; 0us; 16389us; 1us; 32768us; 23us; 57us; 1us; 32768us; 20us; 13us; 2us; 32768us; 19us; 16us; 23us; 57us; 2us; 32768us; 19us; 15us; 23us; 57us; 0us; 16390us; 0us; 16391us; 1us; 32768us; 23us; 57us; 1us; 32768us; 20us; 19us; 2us; 32768us; 19us; 22us; 23us; 57us; 2us; 32768us; 19us; 21us; 23us; 57us; 0us; 16392us; 0us; 16393us; 1us; 32768us; 23us; 57us; 1us; 32768us; 20us; 25us; 5us; 32768us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 19us; 28us; 5us; 32768us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 19us; 27us; 0us; 16394us; 0us; 16395us; 0us; 16398us; 0us; 16399us; 0us; 16400us; 0us; 16401us; 1us; 32768us; 9us; 34us; 0us; 16402us; 1us; 32768us; 9us; 36us; 0us; 16403us; 1us; 16406us; 11us; 38us; 2us; 16405us; 16us; 50us; 23us; 57us; 1us; 16404us; 18us; 45us; 1us; 32768us; 9us; 41us; 0us; 16407us; 1us; 32768us; 9us; 43us; 0us; 16408us; 1us; 16413us; 18us; 45us; 1us; 32768us; 17us; 46us; 0us; 16409us; 1us; 16410us; 10us; 59us; 0us; 16411us; 0us; 16412us; 1us; 32768us; 23us; 57us; 2us; 32768us; 12us; 55us; 15us; 52us; 1us; 32768us; 8us; 53us; 2us; 32768us; 16us; 50us; 23us; 57us; 0us; 16414us; 1us; 32768us; 23us; 57us; 0us; 16415us; 0us; 16416us; 0us; 16417us; 1us; 32768us; 23us; 57us; 0us; 16418us; |]
+let _fsyacc_actionTableElements = [|5us; 32768us; 0us; 3us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 0us; 49152us; 0us; 16385us; 0us; 16386us; 4us; 16387us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 1us; 32768us; 21us; 57us; 1us; 32768us; 20us; 7us; 2us; 32768us; 19us; 10us; 21us; 57us; 2us; 32768us; 19us; 9us; 21us; 57us; 0us; 16388us; 0us; 16389us; 1us; 32768us; 21us; 57us; 1us; 32768us; 20us; 13us; 2us; 32768us; 19us; 16us; 21us; 57us; 2us; 32768us; 19us; 15us; 21us; 57us; 0us; 16390us; 0us; 16391us; 1us; 32768us; 21us; 57us; 1us; 32768us; 20us; 19us; 2us; 32768us; 19us; 22us; 21us; 57us; 2us; 32768us; 19us; 21us; 21us; 57us; 0us; 16392us; 0us; 16393us; 1us; 32768us; 21us; 57us; 1us; 32768us; 20us; 25us; 5us; 32768us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 19us; 28us; 5us; 32768us; 4us; 23us; 5us; 17us; 6us; 11us; 7us; 5us; 19us; 27us; 0us; 16394us; 0us; 16395us; 0us; 16398us; 0us; 16399us; 0us; 16400us; 0us; 16401us; 1us; 32768us; 9us; 34us; 0us; 16402us; 1us; 32768us; 9us; 36us; 0us; 16403us; 1us; 16406us; 11us; 38us; 2us; 16405us; 16us; 50us; 21us; 57us; 1us; 16404us; 18us; 45us; 1us; 32768us; 9us; 41us; 0us; 16407us; 1us; 32768us; 9us; 43us; 0us; 16408us; 1us; 16413us; 18us; 45us; 1us; 32768us; 17us; 46us; 0us; 16409us; 1us; 16410us; 10us; 59us; 0us; 16411us; 0us; 16412us; 1us; 32768us; 21us; 57us; 2us; 32768us; 12us; 55us; 15us; 52us; 1us; 32768us; 8us; 53us; 2us; 32768us; 16us; 50us; 21us; 57us; 0us; 16414us; 1us; 32768us; 21us; 57us; 0us; 16415us; 0us; 16416us; 0us; 16417us; 1us; 32768us; 21us; 57us; 0us; 16418us; |]
 let _fsyacc_actionTableRowOffsets = [|0us; 6us; 7us; 8us; 9us; 14us; 16us; 18us; 21us; 24us; 25us; 26us; 28us; 30us; 33us; 36us; 37us; 38us; 40us; 42us; 45us; 48us; 49us; 50us; 52us; 54us; 60us; 66us; 67us; 68us; 69us; 70us; 71us; 72us; 74us; 75us; 77us; 78us; 80us; 83us; 85us; 87us; 88us; 90us; 91us; 93us; 95us; 96us; 98us; 99us; 100us; 102us; 105us; 107us; 110us; 111us; 113us; 114us; 115us; 116us; 118us; |]
 let _fsyacc_reductionSymbolCounts = [|1us; 1us; 1us; 1us; 5us; 4us; 5us; 4us; 5us; 4us; 5us; 4us; 3us; 2us; 1us; 1us; 1us; 1us; 2us; 3us; 3us; 2us; 1us; 2us; 3us; 3us; 1us; 1us; 1us; 5us; 1us; 3us; 1us; 1us; 3us; |]
 let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 2us; 3us; 3us; 4us; 4us; 5us; 5us; 6us; 6us; 7us; 8us; 9us; 9us; 9us; 9us; 10us; 10us; 11us; 11us; 11us; 12us; 12us; 13us; 14us; 14us; 14us; 15us; 16us; 16us; 17us; 18us; 18us; |]
@@ -292,20 +292,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 66 "Parser.fsy"
+# 68 "Parser.fsy"
                                                                    _1 
                    )
-# 66 "Parser.fsy"
+# 68 "Parser.fsy"
                  : Declaration list));
 # 300 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 68 "Parser.fsy"
+# 70 "Parser.fsy"
                                                                    [] 
                    )
-# 68 "Parser.fsy"
+# 70 "Parser.fsy"
                  : 'document));
 # 310 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -313,10 +313,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 69 "Parser.fsy"
+# 71 "Parser.fsy"
                                                                    List.rev _1 
                    )
-# 69 "Parser.fsy"
+# 71 "Parser.fsy"
                  : 'document));
 # 321 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -328,10 +328,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 71 "Parser.fsy"
+# 73 "Parser.fsy"
                                                                                                Struct (_2, List.rev _4) 
                    )
-# 71 "Parser.fsy"
+# 73 "Parser.fsy"
                  : 'Struct));
 # 336 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -342,10 +342,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 72 "Parser.fsy"
+# 74 "Parser.fsy"
                                                                                                raise (Exception (sprintf "Structs cannot be empty: struct %s" (fst _2))) 
                    )
-# 72 "Parser.fsy"
+# 74 "Parser.fsy"
                  : 'Struct));
 # 350 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -357,10 +357,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 74 "Parser.fsy"
+# 76 "Parser.fsy"
                                                                                                Record (_2, List.rev _4) 
                    )
-# 74 "Parser.fsy"
+# 76 "Parser.fsy"
                  : 'Record));
 # 365 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -371,10 +371,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 75 "Parser.fsy"
+# 77 "Parser.fsy"
                                                                                                Record (_2, []) 
                    )
-# 75 "Parser.fsy"
+# 77 "Parser.fsy"
                  : 'Record));
 # 379 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -386,10 +386,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 77 "Parser.fsy"
+# 79 "Parser.fsy"
                                                                                                Union  (_2, List.rev _4) 
                    )
-# 77 "Parser.fsy"
+# 79 "Parser.fsy"
                  : 'Union));
 # 394 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -400,10 +400,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 78 "Parser.fsy"
+# 80 "Parser.fsy"
                                                                                                raise (Exception (sprintf "Unions cannot be empty: union %s" (fst _2))) 
                    )
-# 78 "Parser.fsy"
+# 80 "Parser.fsy"
                  : 'Union));
 # 408 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -415,10 +415,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 80 "Parser.fsy"
+# 82 "Parser.fsy"
                                                                                                Module (_2, List.rev _4) 
                    )
-# 80 "Parser.fsy"
+# 82 "Parser.fsy"
                  : 'Module));
 # 423 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -429,10 +429,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 81 "Parser.fsy"
+# 83 "Parser.fsy"
                                                                                                Module (_2, []) 
                    )
-# 81 "Parser.fsy"
+# 83 "Parser.fsy"
                  : 'Module));
 # 437 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -442,10 +442,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 83 "Parser.fsy"
+# 85 "Parser.fsy"
                                                                                                Alias (_2, _3) 
                    )
-# 83 "Parser.fsy"
+# 85 "Parser.fsy"
                  : 'Alias));
 # 450 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -454,10 +454,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 85 "Parser.fsy"
+# 87 "Parser.fsy"
                                                                                                Open _2 
                    )
-# 85 "Parser.fsy"
+# 87 "Parser.fsy"
                  : 'Open));
 # 462 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -465,10 +465,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 87 "Parser.fsy"
+# 89 "Parser.fsy"
                                                                    _1 
                    )
-# 87 "Parser.fsy"
+# 89 "Parser.fsy"
                  : Declaration));
 # 473 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -476,10 +476,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 88 "Parser.fsy"
+# 90 "Parser.fsy"
                                                                    _1 
                    )
-# 88 "Parser.fsy"
+# 90 "Parser.fsy"
                  : Declaration));
 # 484 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -487,10 +487,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 89 "Parser.fsy"
+# 91 "Parser.fsy"
                                                                    _1 
                    )
-# 89 "Parser.fsy"
+# 91 "Parser.fsy"
                  : Declaration));
 # 495 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -498,10 +498,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 90 "Parser.fsy"
+# 92 "Parser.fsy"
                                                                    _1 
                    )
-# 90 "Parser.fsy"
+# 92 "Parser.fsy"
                  : Declaration));
 # 506 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -510,10 +510,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 92 "Parser.fsy"
+# 94 "Parser.fsy"
                                                                    [ _1 ] 
                    )
-# 92 "Parser.fsy"
+# 94 "Parser.fsy"
                  : Declaration list));
 # 518 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -523,10 +523,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 93 "Parser.fsy"
+# 95 "Parser.fsy"
                                                                    _2 :: _1 
                    )
-# 93 "Parser.fsy"
+# 95 "Parser.fsy"
                  : Declaration list));
 # 531 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -536,10 +536,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 95 "Parser.fsy"
+# 97 "Parser.fsy"
                                                                    { Field.Identifier = _1; Type = _3 } 
                    )
-# 95 "Parser.fsy"
+# 97 "Parser.fsy"
                  : 'field));
 # 544 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -548,10 +548,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 96 "Parser.fsy"
+# 98 "Parser.fsy"
                                                                    raise (Exception (sprintf "a 'type' is required after '%s :'" (fst _1))) 
                    )
-# 96 "Parser.fsy"
+# 98 "Parser.fsy"
                  : 'field));
 # 556 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -559,10 +559,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 97 "Parser.fsy"
+# 99 "Parser.fsy"
                                                                    raise (Exception (sprintf "a ': type' is required after '%s'" (fst _1))) 
                    )
-# 97 "Parser.fsy"
+# 99 "Parser.fsy"
                  : 'field));
 # 567 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -571,10 +571,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 99 "Parser.fsy"
+# 101 "Parser.fsy"
                                                                    [ _1 ] 
                    )
-# 99 "Parser.fsy"
+# 101 "Parser.fsy"
                  : 'field_list));
 # 579 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -584,10 +584,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 100 "Parser.fsy"
+# 102 "Parser.fsy"
                                                                    _2 :: _1 
                    )
-# 100 "Parser.fsy"
+# 102 "Parser.fsy"
                  : 'field_list));
 # 592 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -597,10 +597,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 102 "Parser.fsy"
+# 104 "Parser.fsy"
                                                                    Type.Array _1 
                    )
-# 102 "Parser.fsy"
+# 104 "Parser.fsy"
                  : 'array_type));
 # 605 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -608,10 +608,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 104 "Parser.fsy"
+# 106 "Parser.fsy"
                                                                    Type.Path (List.rev _1) 
                    )
-# 104 "Parser.fsy"
+# 106 "Parser.fsy"
                  : 'atype));
 # 616 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -619,10 +619,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 105 "Parser.fsy"
+# 107 "Parser.fsy"
                                                                    _1
                    )
-# 105 "Parser.fsy"
+# 107 "Parser.fsy"
                  : 'atype));
 # 627 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -630,10 +630,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 106 "Parser.fsy"
+# 108 "Parser.fsy"
                                                                    Type.Function _1 
                    )
-# 106 "Parser.fsy"
+# 108 "Parser.fsy"
                  : 'atype));
 # 638 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -645,10 +645,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 108 "Parser.fsy"
+# 110 "Parser.fsy"
                                                                                     (_5, List.rev _2) 
                    )
-# 108 "Parser.fsy"
+# 110 "Parser.fsy"
                  : 'func_type));
 # 653 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -656,10 +656,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 110 "Parser.fsy"
+# 112 "Parser.fsy"
                                                                    [ _1 ] 
                    )
-# 110 "Parser.fsy"
+# 112 "Parser.fsy"
                  : 'fun_args));
 # 664 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -669,10 +669,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 111 "Parser.fsy"
+# 113 "Parser.fsy"
                                                                    _3 :: _1 
                    )
-# 111 "Parser.fsy"
+# 113 "Parser.fsy"
                  : 'fun_args));
 # 677 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -680,10 +680,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 114 "Parser.fsy"
+# 116 "Parser.fsy"
                                                                    _1 
                    )
-# 114 "Parser.fsy"
+# 116 "Parser.fsy"
                  : 'identifier));
 # 688 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -691,10 +691,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 116 "Parser.fsy"
+# 118 "Parser.fsy"
                                                                    [ _1 ] 
                    )
-# 116 "Parser.fsy"
+# 118 "Parser.fsy"
                  : 'path));
 # 699 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
@@ -704,10 +704,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 117 "Parser.fsy"
+# 119 "Parser.fsy"
                                                                    _3 :: _1 
                    )
-# 117 "Parser.fsy"
+# 119 "Parser.fsy"
                  : 'path));
 |]
 # 713 "Parser.fs"

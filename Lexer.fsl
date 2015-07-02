@@ -49,10 +49,10 @@ rule read filename istream =
     parse
     | white         { read filename istream lexbuf }
     | newline       { newline lexbuf; read filename istream lexbuf }
-    | real64        { REAL64 (ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
-    | int64         { SINT64 (ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
-    | "true"        { TRUE   (ConstBool   (true                        , position(filename, lexbuf.EndPos))) }
-    | "false"       { FALSE  (ConstBool   (false                       , position(filename, lexbuf.EndPos))) }
+    | real64        { REAL64 (Value.ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | int64         { SINT64 (Value.ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | "true"        { TRUE   (Value.ConstBool   (true                        , position(filename, lexbuf.EndPos))) }
+    | "false"       { FALSE  (Value.ConstBool   (false                       , position(filename, lexbuf.EndPos))) }
     | "//" op_sym*  { read_line_comment filename istream lexbuf }
     | "struct"      { KW_STRUCT   (position(filename, lexbuf.EndPos)) }
     | "record"      { KW_RECORD   (position(filename, lexbuf.EndPos)) }
@@ -81,7 +81,7 @@ rule read filename istream =
 and read_string filename istream str ignorequote =
     parse
     | '"'           { if ignorequote then (read_string filename istream (str+"\\\"") false lexbuf)
-                      else STRING (ConstString (str, position(filename, lexbuf.EndPos))) }
+                      else STRING (Value.ConstString (str, position(filename, lexbuf.EndPos))) }
     | '\\'          { read_string filename istream str true lexbuf }
     | [^ '"' '\\']+ { read_string filename istream (str + (lexeme lexbuf)) false lexbuf }
     | eof           { raise (Exception ("String is not terminated")) }
