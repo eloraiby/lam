@@ -61,6 +61,9 @@ rule read filename istream =
     | "fn"          { KW_FN       (position(filename, lexbuf.EndPos)) }
     | "alias"       { KW_ALIAS    (position(filename, lexbuf.EndPos)) }
     | "open"        { KW_OPEN     (position(filename, lexbuf.EndPos)) }
+    | "if"          { KW_IF       (position(filename, lexbuf.EndPos)) }
+    | "else"        { KW_ELSE     (position(filename, lexbuf.EndPos)) }
+    | "let"         { KW_LET      (position(filename, lexbuf.EndPos)) }
     | "->"          { YIELD       (position(filename, lexbuf.EndPos)) }
     | op_sym        { IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) }
     | identifier    { IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) }

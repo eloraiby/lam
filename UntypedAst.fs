@@ -50,7 +50,7 @@ type Type       =
     | Function  of FuncType
     | Array     of Type
 
-and FuncType    = Type * (Field list)
+and FuncType    = (Field list) * Type
 
 and Field      = {
     Identifier  : Identifier
@@ -69,7 +69,7 @@ type Declaration =
     | Struct    of Identifier * (Field list)
     | Record    of Identifier * (Field list)
     | Union     of Identifier * (Field list)
-    | Function  of Identifier * FuncType * ((Expr list) option)
+    | Function  of Identifier * FuncType * (Expr list)
     | ConstBool     of Identifier * ConstBool
     | ConstChar     of Identifier * ConstChar
     | ConstString   of Identifier * ConstString
@@ -78,16 +78,16 @@ type Declaration =
     | Module    of Identifier * (Declaration list)
 
 and Expr =
-    | If        of Expr * Expr * Expr
-    | Let       of (Identifier list) * (Expr list) * (Expr list)
-    | Apply     of Identifier * (Expr list) // struct/unions/.../function calls and variables
-    | UnitValue
+    | If        of Expr * (Expr list) * (Expr list) * TokenInfo
+    | Let       of (Identifier list) * (Expr list) * (Expr list) * TokenInfo
+    | Apply     of Identifier * (Expr list) * TokenInfo // struct/unions/.../function calls and variables
+    | Tuple     of Expr list
     | Bool      of ConstBool
     | Char      of ConstChar
     | SInt64    of ConstSInt64
     | Real64    of ConstReal64
     | String    of ConstString
-
+    | UnitValue of TokenInfo
 
 
 

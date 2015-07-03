@@ -56,7 +56,9 @@ open System
 %token <TokenInfo>  KW_FN
 %token <TokenInfo>  KW_ALIAS
 %token <TokenInfo>  KW_OPEN
-
+%token <TokenInfo>  KW_IF
+%token <TokenInfo>  KW_ELSE
+%token <TokenInfo>  KW_LET
 
 %token EOF
 %type <Declaration list>   start
@@ -90,6 +92,7 @@ decl        : Struct                        { $1 }
             | Record                        { $1 }
             | Union                         { $1 }
             | Module                        { $1 }
+            | func                          { $1 }
 
 decl_list   : decl SC                       { [ $1 ] }
             | decl_list decl SC             { $2 :: $1 }
@@ -107,7 +110,7 @@ atype       : path                          { Type.Path (List.rev $1) }
             | array_type                    { $1}
             | func_type                     { Type.Function $1 }
 
-func_type   : LEFT_PAREN fun_args RIGHT_PAREN YIELD atype    { ($5, List.rev $2) }
+func_type   : LEFT_PAREN fun_args RIGHT_PAREN YIELD atype    { (List.rev $2, $5) }
 
 fun_args    : field                         { [ $1 ] }
             | fun_args COMMA field          { $3 :: $1 }
@@ -118,4 +121,15 @@ identifier  : IDENTIFIER                    { $1 }
 path        : identifier                    { [ $1 ] }
             | path DOT identifier           { $3 :: $1 }
 
-//func        : KW_FN identifier func_type func_body { }
+func        : KW_FN identifier func_type LEFT_BRACE func_body RIGHT_BRACE { Declaration.Function ($2, $3, $5) }
+
+// expressions
+func_body   : expr_list                     { List.rev $1 }
+
+expr_list   :                               { [] }
+            | expr SC                       { [ $1 ] }
+            | expr_list expr SC             { $2 :: $1 }
+
+expr        : KW_IF LEFT_PAREN expr RIGHT_PAREN LEFT_BRACE expr_list RIGHT_BRACE KW_ELSE LEFT_BRACE expr_list RIGHT_BRACE
+                                            { Expr.If ($3, $6, $10, $1) }
+ 

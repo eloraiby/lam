@@ -31,6 +31,9 @@ module Something {
     };
 };
 
+fn someFun (xf: float, yf: float) -> (xf2: float) -> float {
+};
+
 struct GS {
     x: int;
 };

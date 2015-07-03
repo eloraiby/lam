@@ -2,6 +2,9 @@
 module Parser
 type token = 
   | EOF
+  | KW_LET of (TokenInfo)
+  | KW_ELSE of (TokenInfo)
+  | KW_IF of (TokenInfo)
   | KW_OPEN of (TokenInfo)
   | KW_ALIAS of (TokenInfo)
   | KW_FN of (TokenInfo)
@@ -31,6 +34,9 @@ type token =
   | SINT64 of (Expr)
 type tokenId = 
     | TOKEN_EOF
+    | TOKEN_KW_LET
+    | TOKEN_KW_ELSE
+    | TOKEN_KW_IF
     | TOKEN_KW_OPEN
     | TOKEN_KW_ALIAS
     | TOKEN_KW_FN
@@ -80,6 +86,10 @@ type nonTerminalId =
     | NONTERM_fun_args
     | NONTERM_identifier
     | NONTERM_path
+    | NONTERM_func
+    | NONTERM_func_body
+    | NONTERM_expr_list
+    | NONTERM_expr
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
 
