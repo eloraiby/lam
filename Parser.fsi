@@ -12,6 +12,10 @@ type token =
   | KW_UNION of (TokenInfo)
   | KW_RECORD of (TokenInfo)
   | KW_STRUCT of (TokenInfo)
+  | SET of (TokenInfo)
+  | EQ of (TokenInfo)
+  | GEQ of (TokenInfo)
+  | LEQ of (TokenInfo)
   | YIELD of (TokenInfo)
   | SC of (TokenInfo)
   | DOT of (TokenInfo)
@@ -44,6 +48,10 @@ type tokenId =
     | TOKEN_KW_UNION
     | TOKEN_KW_RECORD
     | TOKEN_KW_STRUCT
+    | TOKEN_SET
+    | TOKEN_EQ
+    | TOKEN_GEQ
+    | TOKEN_LEQ
     | TOKEN_YIELD
     | TOKEN_SC
     | TOKEN_DOT

@@ -49,6 +49,10 @@ open System
 %token <TokenInfo>  DOT
 %token <TokenInfo>  SC
 %token <TokenInfo>  YIELD
+%token <TokenInfo>  LEQ
+%token <TokenInfo>  GEQ
+%token <TokenInfo>  EQ
+%token <TokenInfo>  SET
 %token <TokenInfo>  KW_STRUCT
 %token <TokenInfo>  KW_RECORD
 %token <TokenInfo>  KW_UNION
@@ -132,4 +136,4 @@ expr_list   :                               { [] }
 
 expr        : KW_IF LEFT_PAREN expr RIGHT_PAREN LEFT_BRACE expr_list RIGHT_BRACE KW_ELSE LEFT_BRACE expr_list RIGHT_BRACE
                                             { Expr.If ($3, $6, $10, $1) }
- 
+
