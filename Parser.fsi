@@ -12,6 +12,18 @@ type token =
   | KW_UNION of (TokenInfo)
   | KW_RECORD of (TokenInfo)
   | KW_STRUCT of (TokenInfo)
+  | OP_NOT of (TokenInfo)
+  | OP_XOR of (TokenInfo)
+  | OP_OR of (TokenInfo)
+  | OP_AND of (TokenInfo)
+  | OP_MOD of (TokenInfo)
+  | OP_DIV of (TokenInfo)
+  | OP_MUL of (TokenInfo)
+  | OP_SUB of (TokenInfo)
+  | OP_ADD of (TokenInfo)
+  | OP_LNOT of (TokenInfo)
+  | OP_LOR of (TokenInfo)
+  | OP_LAND of (TokenInfo)
   | SET of (TokenInfo)
   | EQ of (TokenInfo)
   | GEQ of (TokenInfo)
@@ -30,12 +42,12 @@ type token =
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
   | IDENTIFIER of (Identifier)
-  | FALSE of (Expr)
-  | TRUE of (Expr)
-  | CHAR of (Expr)
-  | STRING of (Expr)
-  | REAL64 of (Expr)
-  | SINT64 of (Expr)
+  | FALSE of (ConstBool)
+  | TRUE of (ConstBool)
+  | CHAR of (ConstChar)
+  | STRING of (ConstString)
+  | REAL64 of (ConstReal64)
+  | SINT64 of (ConstSInt64)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_KW_LET
@@ -48,6 +60,18 @@ type tokenId =
     | TOKEN_KW_UNION
     | TOKEN_KW_RECORD
     | TOKEN_KW_STRUCT
+    | TOKEN_OP_NOT
+    | TOKEN_OP_XOR
+    | TOKEN_OP_OR
+    | TOKEN_OP_AND
+    | TOKEN_OP_MOD
+    | TOKEN_OP_DIV
+    | TOKEN_OP_MUL
+    | TOKEN_OP_SUB
+    | TOKEN_OP_ADD
+    | TOKEN_OP_LNOT
+    | TOKEN_OP_LOR
+    | TOKEN_OP_LAND
     | TOKEN_SET
     | TOKEN_EQ
     | TOKEN_GEQ
@@ -97,6 +121,12 @@ type nonTerminalId =
     | NONTERM_func
     | NONTERM_func_body
     | NONTERM_expr_list
+    | NONTERM_constant
+    | NONTERM_primary_exp
+    | NONTERM_postfix_exp
+    | NONTERM_tuple_arg_list
+    | NONTERM_tuple
+    | NONTERM_arg_list
     | NONTERM_expr
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int

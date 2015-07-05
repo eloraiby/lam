@@ -57,6 +57,21 @@ and Field      = {
     Type        : Type
 }
 
+type IdentOrOp =
+    | Identifier of Identifier
+    | OpAdd
+    | OpSub
+    | OpMul
+    | OpDiv
+    | OpMod
+    | OpAnd
+    | OpOr
+    | OpXor
+    | OpNot
+    | OpLAnd
+    | OpLOr
+    | OpLNot
+
 type ConstBool      = bool * TokenInfo
 type ConstChar      = char * TokenInfo
 type ConstSInt64    = Int64 * TokenInfo
@@ -80,7 +95,10 @@ type Declaration =
 and Expr =
     | If        of Expr * (Expr list) * (Expr list) * TokenInfo
     | Let       of (Identifier list) * (Expr list) * (Expr list) * TokenInfo
-    | Apply     of Identifier * (Expr list) * TokenInfo // struct/unions/.../function calls and variables
+    | Apply     of Expr * (Expr list) // struct/unions/.../function calls and variables
+    | Item      of Expr * Expr  // expr * index
+    | Access    of Expr * Identifier    // access identifier of expr
+    | Identifier of Identifier
     | Tuple     of Expr list
     | Bool      of ConstBool
     | Char      of ConstChar
