@@ -106,6 +106,7 @@ and Expr =
     | Real64    of ConstReal64
     | String    of ConstString
     | UnitValue of TokenInfo
+    | AnonFunc  of FuncType * (Expr list)
 
 
 

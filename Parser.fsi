@@ -119,14 +119,18 @@ type nonTerminalId =
     | NONTERM_identifier
     | NONTERM_path
     | NONTERM_func
+    | NONTERM_anon_func
     | NONTERM_func_body
     | NONTERM_expr_list
     | NONTERM_constant
-    | NONTERM_primary_exp
-    | NONTERM_postfix_exp
-    | NONTERM_tuple_arg_list
-    | NONTERM_tuple
     | NONTERM_arg_list
+    | NONTERM_application
+    | NONTERM_arg
+    | NONTERM_one_tuple
+    | NONTERM_ntuple_start
+    | NONTERM_ntuple_arg
+    | NONTERM_ntuple
+    | NONTERM_tuple
     | NONTERM_expr
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int

@@ -143,6 +143,7 @@ path        : identifier                    { [ $1 ] }
             | path DOT identifier           { $3 :: $1 }
 
 func        : KW_FN identifier func_type LEFT_BRACE func_body RIGHT_BRACE { Declaration.Function ($2, $3, $5) }
+anon_func   : KW_FN func_type LEFT_BRACE func_body RIGHT_BRACE { Expr.AnonFunc ($2, $4) }
 
 func_body   : expr_list                     { List.rev $1 }
 
@@ -151,36 +152,40 @@ expr_list   : expr SC                       { [ $1 ] }
             | expr_list expr SC             { $2 :: $1 }
 
 constant    : SINT64                        { Expr.SInt64 $1 }
+            | REAL64                        { Expr.Real64 $1 }
+            | STRING                        { Expr.String $1 }
+            | CHAR                          { Expr.Char $1 }
+            | TRUE                          { Expr.Bool $1 }
+            | FALSE                         { Expr.Bool $1 }
 
-primary_exp : identifier                    { Expr.Apply (Expr.Identifier $1, []) }
+arg_list    : arg                           { [ $1 ] }
+            | arg_list arg                  { $2 :: $1 }
+
+application : one_tuple arg_list            { Expr.Apply($1, List.rev $2) }
+            | identifier arg_list           { Expr.Apply(Expr.Identifier $1, List.rev $2) }
+
+arg         : constant                      { $1 }
+            | identifier                    { Expr.Identifier $1 }
+            | tuple                         { $1 }
+
+one_tuple   : LEFT_PAREN expr RIGHT_PAREN   { Expr.Tuple([ $2 ]) }
+
+ntuple_start: expr COMMA                    { $1 }
+
+ntuple_arg  : ntuple_start expr             { [ $1 ] }
+            | ntuple_arg COMMA expr         { $3 :: $1 }
+
+ntuple      : LEFT_PAREN ntuple_arg RIGHT_PAREN { Expr.Tuple (List.rev $2) }
+
+tuple       : one_tuple                     { $1 }
+            | ntuple                        { $1 }
+
+expr        : KW_IF one_tuple LEFT_BRACE expr_list RIGHT_BRACE KW_ELSE LEFT_BRACE expr_list RIGHT_BRACE
+                                            { Expr.If ($2, $4, $8, $1) }
+            | application                   { $1 }
             | constant                      { $1 }
-            | LEFT_PAREN expr RIGHT_PAREN   { $2 }
+            | anon_func                     { $1 }
+            | identifier                    { Expr.Identifier $1 }
 
-postfix_exp : primary_exp                   { $1 }
-            | postfix_exp LEFT_BRACK expr RIGHT_BRACK { Expr.Item ($1, $3) }
-            | postfix_exp arg_list          { Expr.Apply ($1, List.rev $2) }
-            | postfix_exp DOT identifier    { Expr.Access ($1, $3) }
 
-tuple_arg_list : expr                       { [ $1 ] }
-            | tuple_arg_list COMMA expr     { $3 :: $1 }
-
-tuple       : LEFT_PAREN tuple_arg_list RIGHT_PAREN { Expr.Tuple (List.rev $2) }
-           
-arg_list    : expr                          { [ $1 ] }
-            | tuple                         { [ $1 ] }
-            | arg_list COMMA expr           { $3 :: $1 }
-            | arg_list COMMA tuple          { $3 :: $1 }
-
-expr        : KW_IF LEFT_PAREN expr RIGHT_PAREN LEFT_BRACE expr_list RIGHT_BRACE KW_ELSE LEFT_BRACE expr_list RIGHT_BRACE
-                                            { Expr.If ($3, $6, $10, $1) }
-            | postfix_exp                   { $1 }
-
-//            | op_expr                       { $1 }
-//            | identifier                    { Expr.Apply (IdentOrOp.Identifier $1, [], snd $1) }
-
-//op_expr     : expr                          { $1 }
-//            | op_expr OP_ADD op_expr        { Expr.Apply (IdentOrOp.OpAdd, [ $1; $3 ], $2) }
-//            | op_expr OP_SUB op_expr        { Expr.Apply (IdentOrOp.OpSub, [ $1; $3 ], $2) }
-//            | op_expr OP_MUL op_expr        { Expr.Apply (IdentOrOp.OpMul, [ $1; $3 ], $2) }
-//            | op_expr OP_DIV op_expr        { Expr.Apply (IdentOrOp.OpDiv, [ $1; $3 ], $2) }
 
