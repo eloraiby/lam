@@ -49,9 +49,12 @@ open System
 %token <TokenInfo>  DOT
 %token <TokenInfo>  SC
 %token <TokenInfo>  YIELD
-%token <TokenInfo>  LEQ
-%token <TokenInfo>  GEQ
-%token <TokenInfo>  EQ
+%token <TokenInfo>  OP_LEQ
+%token <TokenInfo>  OP_GEQ
+%token <TokenInfo>  OP_EQ
+%token <TokenInfo>  OP_LT
+%token <TokenInfo>  OP_GT
+
 %token <TokenInfo>  SET
 
 %token <TokenInfo>  OP_LAND
@@ -69,123 +72,85 @@ open System
 %token <TokenInfo>  OP_XOR
 %token <TokenInfo>  OP_NOT
 
-%token <TokenInfo>  KW_STRUCT
-%token <TokenInfo>  KW_RECORD
-%token <TokenInfo>  KW_UNION
 %token <TokenInfo>  KW_MODULE
-%token <TokenInfo>  KW_FN
-%token <TokenInfo>  KW_ALIAS
-%token <TokenInfo>  KW_OPEN
-%token <TokenInfo>  KW_IF
-%token <TokenInfo>  KW_ELSE
-%token <TokenInfo>  KW_LET
+%token <TokenInfo>  KW_ENTITY
+%token <TokenInfo>  KW_STATE
+%token <TokenInfo>  KW_RULE
+
 
 %token EOF
 %type <Declaration list>   start
-%type <Declaration>        decl
-%type <Declaration list>   decl_list
 
 %%
 
 start       : document                      { $1 }
 
 document    : EOF                           { [] }
-            | decl_list                     { List.rev $1 }
-
-Struct      : KW_STRUCT identifier LEFT_BRACE field_list RIGHT_BRACE    { Struct ($2, List.rev $4) }
-            | KW_STRUCT identifier LEFT_BRACE RIGHT_BRACE               { raise (Exception (sprintf "Structs cannot be empty: struct %s" (fst $2))) }
-
-Record      : KW_RECORD identifier LEFT_BRACE field_list RIGHT_BRACE    { Record ($2, List.rev $4) }
-            | KW_RECORD identifier LEFT_BRACE            RIGHT_BRACE    { Record ($2, []) }
-
-Union       : KW_UNION  identifier LEFT_BRACE field_list RIGHT_BRACE    { Union  ($2, List.rev $4) }
-            | KW_UNION  identifier LEFT_BRACE            RIGHT_BRACE    { raise (Exception (sprintf "Unions cannot be empty: union %s" (fst $2))) }
-
-Module      : KW_MODULE identifier LEFT_BRACE decl_list  RIGHT_BRACE    { Module ($2, List.rev $4) }
-            | KW_MODULE identifier LEFT_BRACE            RIGHT_BRACE    { Module ($2, []) }
-
-Alias       : KW_ALIAS path path                                        { Alias ($2, $3) }
-
-Open        : KW_OPEN path                                              { Open $2 }
-
-decl        : Struct                        { $1 }
-            | Record                        { $1 }
-            | Union                         { $1 }
-            | Module                        { $1 }
-            | func                          { $1 }
-
-decl_list   : decl SC                       { [ $1 ] }
-            | decl_list decl SC             { $2 :: $1 }
-
-field       : identifier COL atype          { { Field.Identifier = $1; Type = $3 } }
-            | identifier COL                { raise (Exception (sprintf "a 'type' is required after '%s :'" (fst $1))) }
-            | identifier                    { raise (Exception (sprintf "a ': type' is required after '%s'" (fst $1))) }
-
-field_list  : field SC                      { [ $1 ] }
-            | field_list field SC           { $2 :: $1 }
-
-array_type  : path                          { Type.Path (List.rev $1) }
-            | array_type LEFT_BRACK RIGHT_BRACK  { Type.Array $1 }
-            | LEFT_PAREN func_type RIGHT_PAREN LEFT_BRACK RIGHT_BRACK  { Type.Array (Type.Function $2) }
-
-atype       : array_type                    { $1}
-            | func_type                     { Type.Function $1 }
-
-func_type   : LEFT_PAREN fun_args RIGHT_PAREN YIELD atype    { (List.rev $2, $5) }
-
-fun_args    : field                         { [ $1 ] }
-            | fun_args COMMA field          { $3 :: $1 }
-
+            | module_list                   { List.rev $1 }
 
 identifier  : IDENTIFIER                    { $1 }
 
-path        : identifier                    { [ $1 ] }
-            | path DOT identifier           { $3 :: $1 }
+entity      : KW_ENTITY identifier entity_args entity_body  {}
 
-func        : KW_FN identifier func_type LEFT_BRACE func_body RIGHT_BRACE { Declaration.Function ($2, $3, $5) }
-anon_func   : KW_FN func_type LEFT_BRACE func_body RIGHT_BRACE { Expr.AnonFunc ($2, $4) }
+entity_args : LEFT_PAREN args RIGHT_PAREN       {}
 
-func_body   : expr_list                     { List.rev $1 }
+args        : identifier                        {}
+            | args COMMA identifier             {}
 
-// expressions
-expr_list   : expr SC                       { [ $1 ] }
-            | expr_list expr SC             { $2 :: $1 }
+entity_body : LEFT_BRACK rs_list RIGHT_BRACK    {}
 
-constant    : SINT64                        { Expr.SInt64 $1 }
-            | REAL64                        { Expr.Real64 $1 }
-            | STRING                        { Expr.String $1 }
-            | CHAR                          { Expr.Char $1 }
-            | TRUE                          { Expr.Bool $1 }
-            | FALSE                         { Expr.Bool $1 }
+rs_list     : rule                              {}
+            | state                             {}
+            | rs_list rule                      {}
+            | rs_list state                     {}
 
-arg_list    : arg                           { [ $1 ] }
-            | arg_list arg                  { $2 :: $1 }
 
-application : one_tuple arg_list            { Expr.Apply($1, List.rev $2) }
-            | identifier arg_list           { Expr.Apply(Expr.Identifier $1, List.rev $2) }
+conjunction : identifier                        {}
+            | boolean_exp                       {}
+            | conjunction identifier            {}
+            | conjunction boolean_exp           {}
 
-arg         : constant                      { $1 }
-            | identifier                    { Expr.Identifier $1 }
-            | tuple                         { $1 }
+disjunction : conjunction                        {}
+            | disjunction OP_OR conjunction      {}
 
-one_tuple   : LEFT_PAREN expr RIGHT_PAREN   { Expr.Tuple([ $2 ]) }
+term        : identifier                        {}
+            | SINT64                            {}
+            | REAL64                            {}
+            | LEFT_PAREN add_exp RIGHT_PAREN    {}
 
-ntuple_start: expr COMMA                    { $1 }
+mul_exp     : term                              {}
+            | mul_exp OP_MUL term               {}
+            | mul_exp OP_DIV term               {}
+            | mul_exp OP_MOD term               {}
 
-ntuple_arg  : ntuple_start expr             { [ $1 ] }
-            | ntuple_arg COMMA expr         { $3 :: $1 }
+add_exp     : mul_exp                           {}
+            | add_exp OP_ADD mul_exp            {}
+            | add_exp OP_SUB mul_exp            {}
+            | OP_ADD mul_exp                    {}
+            | OP_SUB mul_exp                    {}
 
-ntuple      : LEFT_PAREN ntuple_arg RIGHT_PAREN { Expr.Tuple (List.rev $2) }
+boolean_op  : OP_EQ                             {}
+            | OP_LEQ                            {}
+            | OP_GEQ                            {}
+            | OP_LT                             {}
+            | OP_GT                             {}
 
-tuple       : one_tuple                     { $1 }
-            | ntuple                        { $1 }
+boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  {}
 
-expr        : KW_IF one_tuple LEFT_BRACE expr_list RIGHT_BRACE KW_ELSE LEFT_BRACE expr_list RIGHT_BRACE
-                                            { Expr.If ($2, $4, $8, $1) }
-            | application                   { $1 }
-            | constant                      { $1 }
-            | anon_func                     { $1 }
-            | identifier                    { Expr.Identifier $1 }
+rule        : KW_RULE identifier LEFT_BRACK disjunction RIGHT_BRACK {}
+
+state       : KW_STATE identifier LEFT_BRACK disjunction RIGHT_BRACK {}
+
+module      : KW_MODULE identifier module_body  {}
+
+module_body : LEFT_BRACK entities RIGHT_BRACK   {}
+
+entities    : entity                            {}
+            | entities entity                   {}
+
+module_list : module                            {}
+            | module_list module                {}
+
 
 
 

@@ -2,16 +2,10 @@
 module Parser
 type token = 
   | EOF
-  | KW_LET of (TokenInfo)
-  | KW_ELSE of (TokenInfo)
-  | KW_IF of (TokenInfo)
-  | KW_OPEN of (TokenInfo)
-  | KW_ALIAS of (TokenInfo)
-  | KW_FN of (TokenInfo)
+  | KW_RULE of (TokenInfo)
+  | KW_STATE of (TokenInfo)
+  | KW_ENTITY of (TokenInfo)
   | KW_MODULE of (TokenInfo)
-  | KW_UNION of (TokenInfo)
-  | KW_RECORD of (TokenInfo)
-  | KW_STRUCT of (TokenInfo)
   | OP_NOT of (TokenInfo)
   | OP_XOR of (TokenInfo)
   | OP_OR of (TokenInfo)
@@ -25,9 +19,11 @@ type token =
   | OP_LOR of (TokenInfo)
   | OP_LAND of (TokenInfo)
   | SET of (TokenInfo)
-  | EQ of (TokenInfo)
-  | GEQ of (TokenInfo)
-  | LEQ of (TokenInfo)
+  | OP_GT of (TokenInfo)
+  | OP_LT of (TokenInfo)
+  | OP_EQ of (TokenInfo)
+  | OP_GEQ of (TokenInfo)
+  | OP_LEQ of (TokenInfo)
   | YIELD of (TokenInfo)
   | SC of (TokenInfo)
   | DOT of (TokenInfo)
@@ -50,16 +46,10 @@ type token =
   | SINT64 of (ConstSInt64)
 type tokenId = 
     | TOKEN_EOF
-    | TOKEN_KW_LET
-    | TOKEN_KW_ELSE
-    | TOKEN_KW_IF
-    | TOKEN_KW_OPEN
-    | TOKEN_KW_ALIAS
-    | TOKEN_KW_FN
+    | TOKEN_KW_RULE
+    | TOKEN_KW_STATE
+    | TOKEN_KW_ENTITY
     | TOKEN_KW_MODULE
-    | TOKEN_KW_UNION
-    | TOKEN_KW_RECORD
-    | TOKEN_KW_STRUCT
     | TOKEN_OP_NOT
     | TOKEN_OP_XOR
     | TOKEN_OP_OR
@@ -73,9 +63,11 @@ type tokenId =
     | TOKEN_OP_LOR
     | TOKEN_OP_LAND
     | TOKEN_SET
-    | TOKEN_EQ
-    | TOKEN_GEQ
-    | TOKEN_LEQ
+    | TOKEN_OP_GT
+    | TOKEN_OP_LT
+    | TOKEN_OP_EQ
+    | TOKEN_OP_GEQ
+    | TOKEN_OP_LEQ
     | TOKEN_YIELD
     | TOKEN_SC
     | TOKEN_DOT
@@ -102,36 +94,25 @@ type nonTerminalId =
     | NONTERM__startstart
     | NONTERM_start
     | NONTERM_document
-    | NONTERM_Struct
-    | NONTERM_Record
-    | NONTERM_Union
-    | NONTERM_Module
-    | NONTERM_Alias
-    | NONTERM_Open
-    | NONTERM_decl
-    | NONTERM_decl_list
-    | NONTERM_field
-    | NONTERM_field_list
-    | NONTERM_array_type
-    | NONTERM_atype
-    | NONTERM_func_type
-    | NONTERM_fun_args
     | NONTERM_identifier
-    | NONTERM_path
-    | NONTERM_func
-    | NONTERM_anon_func
-    | NONTERM_func_body
-    | NONTERM_expr_list
-    | NONTERM_constant
-    | NONTERM_arg_list
-    | NONTERM_application
-    | NONTERM_arg
-    | NONTERM_one_tuple
-    | NONTERM_ntuple_start
-    | NONTERM_ntuple_arg
-    | NONTERM_ntuple
-    | NONTERM_tuple
-    | NONTERM_expr
+    | NONTERM_entity
+    | NONTERM_entity_args
+    | NONTERM_args
+    | NONTERM_entity_body
+    | NONTERM_rs_list
+    | NONTERM_conjunction
+    | NONTERM_disjunction
+    | NONTERM_term
+    | NONTERM_mul_exp
+    | NONTERM_add_exp
+    | NONTERM_boolean_op
+    | NONTERM_boolean_exp
+    | NONTERM_rule
+    | NONTERM_state
+    | NONTERM_module
+    | NONTERM_module_body
+    | NONTERM_entities
+    | NONTERM_module_list
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
 
