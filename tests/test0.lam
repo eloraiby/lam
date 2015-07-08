@@ -1,40 +1,16 @@
 ﻿// test0
 module Something {
-    struct Vec2 {
-        x: float;
-        y: float;
-    };
+entity SomeEntity (in0: bool, in1: int, in2: float) {
+    state S0 : none = in0 in1 in2   {}
+                    | in1 in2 rule1 {}
+                    | ...           {}
 
-    record Vec3 {
-        x: float[];
-        y: float[][];
-        z: (x: float, b: float) -> float;
-        z2: (x: float, b: float) -> (x1: float, y1: float) -> float;
-    };
+    rule r0         = in1 in2
+                    | in4 in5
 
-    union Un01 {
-        x: unit;
-        y: unit;
-        z: unit;
-    };
+    
 
-    module Nested {
-        union N {
-            M: y;
-        };
 
-        record Vec3 {
-            x: float;
-            y: float;
-            z: float;
-        };        
-    };
-};
+}
 
-fn someFun (xf: float, yf: float) -> (xf2: float) -> float {
-    5 + 12;
-};
-
-struct GS {
-    x: int;
-};
+}

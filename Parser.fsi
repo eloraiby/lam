@@ -97,6 +97,7 @@ type nonTerminalId =
     | NONTERM_identifier
     | NONTERM_entity
     | NONTERM_entity_args
+    | NONTERM_var_type
     | NONTERM_args
     | NONTERM_entity_body
     | NONTERM_rs_list

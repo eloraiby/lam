@@ -83,19 +83,21 @@ open System
 
 %%
 
-start       : document                      { $1 }
-
-document    : EOF                           { [] }
-            | module_list                   { List.rev $1 }
-
-identifier  : IDENTIFIER                    { $1 }
+start       : document                          { $1 }
+                                                
+document    : EOF                               { [] }
+            | module_list                       { List.rev $1 }
+                                                
+identifier  : IDENTIFIER                        { $1 }
 
 entity      : KW_ENTITY identifier entity_args entity_body  {}
 
 entity_args : LEFT_PAREN args RIGHT_PAREN       {}
 
-args        : identifier                        {}
-            | args COMMA identifier             {}
+var_type    : identifier COL identifier         {}
+
+args        : var_type                          {}
+            | args COMMA var_type               {}
 
 entity_body : LEFT_BRACK rs_list RIGHT_BRACK    {}
 
@@ -110,8 +112,8 @@ conjunction : identifier                        {}
             | conjunction identifier            {}
             | conjunction boolean_exp           {}
 
-disjunction : conjunction                        {}
-            | disjunction OP_OR conjunction      {}
+disjunction : conjunction                       {}
+            | disjunction OP_OR conjunction     {}
 
 term        : identifier                        {}
             | SINT64                            {}

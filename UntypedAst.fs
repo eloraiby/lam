@@ -43,70 +43,65 @@ with
     }
 
 type Identifier = string * TokenInfo
-type Path       = Identifier list
-
-type Type       =
-    | Path      of Path
-    | Function  of FuncType
-    | Array     of Type
-
-and FuncType    = (Field list) * Type
 
 and Field      = {
     Identifier  : Identifier
-    Type        : Type
+    Type        : Identifier
 }
 
-type IdentOrOp =
-    | Identifier of Identifier
+type Operator =
     | OpAdd
     | OpSub
     | OpMul
     | OpDiv
     | OpMod
-    | OpAnd
-    | OpOr
-    | OpXor
-    | OpNot
-    | OpLAnd
-    | OpLOr
-    | OpLNot
 
-type ConstBool      = bool * TokenInfo
-type ConstChar      = char * TokenInfo
-type ConstSInt64    = Int64 * TokenInfo
-type ConstReal64    = double * TokenInfo
-type ConstString    = string * TokenInfo
+type BoolOp =
+    | OpEq
+    | OpNeq
+    | OpLT
+    | OpGT
+    | OpLEQ
+    | OPGEQ
+
+type Constant =
+    | ConstBool      of bool * TokenInfo
+    | ConstChar      of char * TokenInfo
+    | ConstSInt64    of Int64 * TokenInfo
+    | ConstReal64    of double * TokenInfo
+    | ConstString    of string * TokenInfo
+
+type Term   =
+    | Identifier of Identifier
+    | Inverse    of Identifier
+    | Const      of Constant
+
+type Equation =
+    | Term  of Term
+    | Operation of Equation * Operator * Equation
+
+type BooleanExp = Equation * BoolOp * Equation
+
+type RuleElem =
+    | Identifier    of Identifier
+    | BooleanExp    of BooleanExp
+
+type Conjunctions = RuleElem list
+type Disjunctions = Conjunctions list
+
+type Entity = {
+    Name        : Identifier
+    Args        : Field list
+    States      : Identifier * Disjunctions
+    Rules       : Identifier * Disjunctions
+}
 
 type Declaration =
-    | Alias     of Path * Path
-    | Open      of Path
-    | Struct    of Identifier * (Field list)
-    | Record    of Identifier * (Field list)
-    | Union     of Identifier * (Field list)
-    | Function  of Identifier * FuncType * (Expr list)
-    | ConstBool     of Identifier * ConstBool
-    | ConstChar     of Identifier * ConstChar
-    | ConstString   of Identifier * ConstString
-    | ConstSInt64   of Identifier * ConstSInt64
-    | ConstReal64   of Identifier * ConstReal64
+    | Entity    of Entity
     | Module    of Identifier * (Declaration list)
 
-and Expr =
-    | If        of Expr * (Expr list) * (Expr list) * TokenInfo
-    | Let       of (Identifier list) * (Expr list) * (Expr list) * TokenInfo
-    | Apply     of Expr * (Expr list) // struct/unions/.../function calls and variables
-    | Item      of Expr * Expr  // expr * index
-    | Access    of Expr * Identifier    // access identifier of expr
-    | Identifier of Identifier
-    | Tuple     of Expr list
-    | Bool      of ConstBool
-    | Char      of ConstChar
-    | SInt64    of ConstSInt64
-    | Real64    of ConstReal64
-    | String    of ConstString
-    | UnitValue of TokenInfo
-    | AnonFunc  of FuncType * (Expr list)
+
+
 
 
 
