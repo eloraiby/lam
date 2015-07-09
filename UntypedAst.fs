@@ -45,7 +45,7 @@ with
 type Identifier = string * TokenInfo
 
 and Field      = {
-    Identifier  : Identifier
+    Name        : Identifier
     Type        : Identifier
 }
 
@@ -58,11 +58,11 @@ type Operator =
 
 type BoolOp =
     | OpEq
-    | OpNeq
+    | OpNEq
     | OpLT
     | OpGT
-    | OpLEQ
-    | OPGEQ
+    | OpLEq
+    | OpGEq
 
 type Constant =
     | ConstBool      of bool * TokenInfo
@@ -79,6 +79,7 @@ type Term   =
 type Equation =
     | Term  of Term
     | Operation of Equation * Operator * Equation
+    | Negate of Equation
 
 type BooleanExp = Equation * BoolOp * Equation
 
@@ -89,11 +90,14 @@ type RuleElem =
 type Conjunctions = RuleElem list
 type Disjunctions = Conjunctions list
 
+type Statement =
+    | Rule of Identifier * Disjunctions
+    | State of Identifier * Disjunctions
+
 type Entity = {
     Name        : Identifier
     Args        : Field list
-    States      : Identifier * Disjunctions
-    Rules       : Identifier * Disjunctions
+    Statements  : Statement list
 }
 
 type Declaration =

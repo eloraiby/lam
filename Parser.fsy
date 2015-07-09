@@ -27,12 +27,12 @@ open System
 
 %start start
 
-%token <ConstSInt64> SINT64
-%token <ConstReal64> REAL64
-%token <ConstString> STRING
-%token <ConstChar>   CHAR
-%token <ConstBool>   TRUE
-%token <ConstBool>   FALSE
+%token <Constant> SINT64
+%token <Constant> REAL64
+%token <Constant> STRING
+%token <Constant> CHAR
+%token <Constant> TRUE
+%token <Constant> FALSE
 
 %token <Identifier> IDENTIFIER
 
@@ -79,7 +79,12 @@ open System
 
 
 %token EOF
-%type <Declaration list>   start
+%type <Declaration list>    start
+%type <Declaration>         module
+%type <Conjunctions>        conjunction
+%type <Equation>            mul_exp
+%type <Equation>            add_exp
+%type <BooleanExp>          boolean_exp
 
 %%
 
@@ -90,68 +95,68 @@ document    : EOF                               { [] }
                                                 
 identifier  : IDENTIFIER                        { $1 }
 
-entity      : KW_ENTITY identifier entity_args entity_body  {}
+entity      : KW_ENTITY identifier entity_args entity_body  { { Entity.Name = $2; Args = $3; Statements = $4 } }
 
-entity_args : LEFT_PAREN args RIGHT_PAREN       {}
+entity_args : LEFT_PAREN args RIGHT_PAREN       { List.rev $2 }
 
-var_type    : identifier COL identifier         {}
+var_type    : identifier COL identifier         { { Field.Name = $1; Type = $3 } }
 
-args        : var_type                          {}
-            | args COMMA var_type               {}
+args        : var_type                          { [ $1 ] }
+            | args COMMA var_type               { $3 :: $1 }
 
-entity_body : LEFT_BRACK rs_list RIGHT_BRACK    {}
+entity_body : LEFT_BRACK rs_list RIGHT_BRACK    { List.rev $2 }
 
-rs_list     : rule                              {}
-            | state                             {}
-            | rs_list rule                      {}
-            | rs_list state                     {}
+rs_list     : rule                              { [ $1 ] }
+            | state                             { [ $1 ] }
+            | rs_list rule                      { $2 :: $1 }
+            | rs_list state                     { $2 :: $1 }
 
 
-conjunction : identifier                        {}
-            | boolean_exp                       {}
-            | conjunction identifier            {}
-            | conjunction boolean_exp           {}
+conjunction : identifier                        { [ RuleElem.Identifier $1 ] }
+            | boolean_exp                       { [ RuleElem.BooleanExp $1 ] }
+            | conjunction identifier            { (RuleElem.Identifier $2) :: $1 }
+            | conjunction boolean_exp           { (RuleElem.BooleanExp $2) :: $1 }
 
-disjunction : conjunction                       {}
-            | disjunction OP_OR conjunction     {}
+disjunction : conjunction                       { [ $1 ] }
+            | disjunction OP_OR conjunction     { $3 :: $1 }
 
-term        : identifier                        {}
-            | SINT64                            {}
-            | REAL64                            {}
-            | LEFT_PAREN add_exp RIGHT_PAREN    {}
+term        : identifier                        { Equation.Term (Term.Identifier $1) }
+            | SINT64                            { Equation.Term (Term.Const $1) }
+            | REAL64                            { Equation.Term (Term.Const $1) }
+            | LEFT_PAREN add_exp RIGHT_PAREN    { $2 }
 
-mul_exp     : term                              {}
-            | mul_exp OP_MUL term               {}
-            | mul_exp OP_DIV term               {}
-            | mul_exp OP_MOD term               {}
+mul_exp     : term                              { $1 }
+            | mul_exp OP_MUL term               { Equation.Operation ($1, Operator.OpMul, $3) }
+            | mul_exp OP_DIV term               { Equation.Operation ($1, Operator.OpDiv, $3) }
+            | mul_exp OP_MOD term               { Equation.Operation ($1, Operator.OpMod, $3) }
 
-add_exp     : mul_exp                           {}
-            | add_exp OP_ADD mul_exp            {}
-            | add_exp OP_SUB mul_exp            {}
-            | OP_ADD mul_exp                    {}
-            | OP_SUB mul_exp                    {}
+add_exp     : mul_exp                           { $1 }
+            | add_exp OP_ADD mul_exp            { Equation.Operation ($1, Operator.OpAdd, $3) }
+            | add_exp OP_SUB mul_exp            { Equation.Operation ($1, Operator.OpSub, $3) }
+            | OP_ADD mul_exp                    { $2 }
+            | OP_SUB mul_exp                    { Equation.Negate $2 }
 
-boolean_op  : OP_EQ                             {}
-            | OP_LEQ                            {}
-            | OP_GEQ                            {}
-            | OP_LT                             {}
-            | OP_GT                             {}
+boolean_op  : OP_EQ                             { BoolOp.OpEq }
+            | OP_LEQ                            { BoolOp.OpLEq }
+            | OP_GEQ                            { BoolOp.OpGEq }
+            | OP_LT                             { BoolOp.OpLT }
+            | OP_GT                             { BoolOp.OpGT }
 
-boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  {}
+boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  { ($2, $3, $4) }
 
-rule        : KW_RULE identifier LEFT_BRACK disjunction RIGHT_BRACK {}
+rule        : KW_RULE identifier LEFT_BRACK disjunction RIGHT_BRACK { Statement.Rule ($2, $4) }
 
-state       : KW_STATE identifier LEFT_BRACK disjunction RIGHT_BRACK {}
+state       : KW_STATE identifier LEFT_BRACK disjunction RIGHT_BRACK { Statement.State ($2, $4) }
 
-module      : KW_MODULE identifier module_body  {}
+module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
 
-module_body : LEFT_BRACK entities RIGHT_BRACK   {}
+module_body : LEFT_BRACK entities RIGHT_BRACK   { List.rev $2 }
 
-entities    : entity                            {}
-            | entities entity                   {}
+entities    : entity                            { [ Declaration.Entity $1 ] }
+            | entities entity                   { (Declaration.Entity $2) :: $1 }
 
-module_list : module                            {}
-            | module_list module                {}
+module_list : module                            { [ $1 ]}
+            | module_list module                { $2 :: $1 }
 
 
 

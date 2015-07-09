@@ -38,12 +38,12 @@ type token =
   | RIGHT_BRACE of (TokenInfo)
   | LEFT_BRACE of (TokenInfo)
   | IDENTIFIER of (Identifier)
-  | FALSE of (ConstBool)
-  | TRUE of (ConstBool)
-  | CHAR of (ConstChar)
-  | STRING of (ConstString)
-  | REAL64 of (ConstReal64)
-  | SINT64 of (ConstSInt64)
+  | FALSE of (Constant)
+  | TRUE of (Constant)
+  | CHAR of (Constant)
+  | STRING of (Constant)
+  | REAL64 of (Constant)
+  | SINT64 of (Constant)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_KW_RULE
