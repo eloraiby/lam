@@ -47,27 +47,20 @@ rule read filename istream =
     parse
     | white         { read filename istream lexbuf }
     | newline       { newline lexbuf; read filename istream lexbuf }
-    | real64        { REAL64      (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos)) }
-    | int64         { SINT64      (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos)) }
-    | "true"        { TRUE        (true                        , position(filename, lexbuf.EndPos)) }
-    | "false"       { FALSE       (false                       , position(filename, lexbuf.EndPos)) }
+    | real64        { REAL64      (Constant.ConstReal64 (Double.Parse (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | int64         { SINT64      (Constant.ConstSInt64 (Int64.Parse  (lexeme lexbuf), position(filename, lexbuf.EndPos))) }
+    | "true"        { TRUE        (Constant.ConstBool   (true                        , position(filename, lexbuf.EndPos))) }
+    | "false"       { FALSE       (Constant.ConstBool   (false                       , position(filename, lexbuf.EndPos))) }
     | "//"          { read_line_comment filename istream lexbuf }
-    | "struct"      { KW_STRUCT   (position(filename, lexbuf.EndPos)) }
-    | "record"      { KW_RECORD   (position(filename, lexbuf.EndPos)) }
-    | "union"       { KW_UNION    (position(filename, lexbuf.EndPos)) }
+    | "entity"      { KW_ENTITY   (position(filename, lexbuf.EndPos)) }
     | "module"      { KW_MODULE   (position(filename, lexbuf.EndPos)) }
-    | "fn"          { KW_FN       (position(filename, lexbuf.EndPos)) }
-    | "alias"       { KW_ALIAS    (position(filename, lexbuf.EndPos)) }
-    | "open"        { KW_OPEN     (position(filename, lexbuf.EndPos)) }
-    | "if"          { KW_IF       (position(filename, lexbuf.EndPos)) }
-    | "else"        { KW_ELSE     (position(filename, lexbuf.EndPos)) }
-    | "let"         { KW_LET      (position(filename, lexbuf.EndPos)) }
+    | "state"       { KW_STATE    (position(filename, lexbuf.EndPos)) }
+    | "rule"        { KW_RULE     (position(filename, lexbuf.EndPos)) }
     | "->"          { YIELD       (position(filename, lexbuf.EndPos)) }
 
-    | "<="          { LEQ         (position(filename, lexbuf.EndPos)) }
-    | ">="          { GEQ         (position(filename, lexbuf.EndPos)) }
-    | "="           { EQ          (position(filename, lexbuf.EndPos)) }
-    | "<-"          { SET         (position(filename, lexbuf.EndPos)) }
+    | "<="          { OP_LEQ      (position(filename, lexbuf.EndPos)) }
+    | ">="          { OP_GEQ      (position(filename, lexbuf.EndPos)) }
+    | "="           { OP_EQ       (position(filename, lexbuf.EndPos)) }
 
     | "!"           { OP_LNOT     (position(filename, lexbuf.EndPos)) }
     | "&&"          { OP_LAND     (position(filename, lexbuf.EndPos)) }
@@ -102,7 +95,7 @@ rule read filename istream =
 and read_string filename istream str ignorequote =
     parse
     | '"'           { if ignorequote then (read_string filename istream (str+"\\\"") false lexbuf)
-                      else STRING (str, position(filename, lexbuf.EndPos)) }
+                      else (STRING (Constant.ConstString(str, position(filename, lexbuf.EndPos)))) }
     | '\\'          { read_string filename istream str true lexbuf }
     | [^ '"' '\\']+ { read_string filename istream (str + (lexeme lexbuf)) false lexbuf }
     | eof           { raise (Exception ("String is not terminated")) }

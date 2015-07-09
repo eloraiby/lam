@@ -104,9 +104,10 @@ var_type    : identifier COL identifier         { { Field.Name = $1; Type = $3 }
 args        : var_type                          { [ $1 ] }
             | args COMMA var_type               { $3 :: $1 }
 
-entity_body : LEFT_BRACK rs_list RIGHT_BRACK    { List.rev $2 }
+entity_body : LEFT_BRACE rs_list RIGHT_BRACE    { List.rev $2 }
 
-rs_list     : rule                              { [ $1 ] }
+rs_list     :                                   { [] }
+            | rule                              { [ $1 ] }
             | state                             { [ $1 ] }
             | rs_list rule                      { $2 :: $1 }
             | rs_list state                     { $2 :: $1 }
@@ -144,15 +145,16 @@ boolean_op  : OP_EQ                             { BoolOp.OpEq }
 
 boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  { ($2, $3, $4) }
 
-rule        : KW_RULE identifier LEFT_BRACK disjunction RIGHT_BRACK { Statement.Rule ($2, $4) }
+rule        : KW_RULE identifier LEFT_BRACE disjunction RIGHT_BRACE { Statement.Rule ($2, $4) }
 
-state       : KW_STATE identifier LEFT_BRACK disjunction RIGHT_BRACK { Statement.State ($2, $4) }
+state       : KW_STATE identifier LEFT_BRACE disjunction RIGHT_BRACE { Statement.State ($2, $4) }
 
 module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
 
-module_body : LEFT_BRACK entities RIGHT_BRACK   { List.rev $2 }
+module_body : LEFT_BRACE entities RIGHT_BRACE  { List.rev $2 }
 
-entities    : entity                            { [ Declaration.Entity $1 ] }
+entities    :                                   { [] }
+            | entity                            { [ Declaration.Entity $1 ] }
             | entities entity                   { (Declaration.Entity $2) :: $1 }
 
 module_list : module                            { [ $1 ]}

@@ -1,15 +1,7 @@
 ﻿// test0
-module Something {
-entity SomeEntity (in0: bool, in1: int, in2: float) {
-    state S0 : none = in0 in1 in2   {}
-                    | in1 in2 rule1 {}
-                    | ...           {}
+module name {
 
-    rule r0         = in1 in2
-                    | in4 in5
-
-    
-
+entity Entity (in0: int) {
 
 }
 
