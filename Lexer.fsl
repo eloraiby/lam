@@ -56,7 +56,6 @@ rule read filename istream =
     | "module"      { KW_MODULE   (position(filename, lexbuf.EndPos)) }
     | "state"       { KW_STATE    (position(filename, lexbuf.EndPos)) }
     | "rule"        { KW_RULE     (position(filename, lexbuf.EndPos)) }
-    | "->"          { YIELD       (position(filename, lexbuf.EndPos)) }
 
     | "<="          { OP_LEQ      (position(filename, lexbuf.EndPos)) }
     | ">="          { OP_GEQ      (position(filename, lexbuf.EndPos)) }
@@ -76,6 +75,8 @@ rule read filename istream =
     | "|||"         { OP_OR       (position(filename, lexbuf.EndPos)) }
     | "^^^"         { OP_XOR      (position(filename, lexbuf.EndPos)) }
     | "~"           { OP_NOT      (position(filename, lexbuf.EndPos)) }
+
+    | '|'           { OP_DISJ     (position(filename, lexbuf.EndPos)) }
 
     | identifier    { IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) }
     | '"'           { read_string filename istream "" false lexbuf }

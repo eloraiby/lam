@@ -96,7 +96,7 @@ type Statement =
 
 type Entity = {
     Name        : Identifier
-    Args        : Field list
+    Args        : Identifier list // currently identifier list instead of Field list
     Statements  : Statement list
 }
 

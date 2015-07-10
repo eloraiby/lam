@@ -48,14 +48,12 @@ open System
 %token <TokenInfo>  COL
 %token <TokenInfo>  DOT
 %token <TokenInfo>  SC
-%token <TokenInfo>  YIELD
+
 %token <TokenInfo>  OP_LEQ
 %token <TokenInfo>  OP_GEQ
 %token <TokenInfo>  OP_EQ
 %token <TokenInfo>  OP_LT
 %token <TokenInfo>  OP_GT
-
-%token <TokenInfo>  SET
 
 %token <TokenInfo>  OP_LAND
 %token <TokenInfo>  OP_LOR
@@ -66,6 +64,8 @@ open System
 %token <TokenInfo>  OP_MUL
 %token <TokenInfo>  OP_DIV
 %token <TokenInfo>  OP_MOD
+
+%token <TokenInfo>  OP_DISJ
 
 %token <TokenInfo>  OP_AND
 %token <TokenInfo>  OP_OR
@@ -79,6 +79,7 @@ open System
 
 
 %token EOF
+
 %type <Declaration list>    start
 %type <Declaration>         module
 %type <Conjunctions>        conjunction
@@ -99,10 +100,8 @@ entity      : KW_ENTITY identifier entity_args entity_body  { { Entity.Name = $2
 
 entity_args : LEFT_PAREN args RIGHT_PAREN       { List.rev $2 }
 
-var_type    : identifier COL identifier         { { Field.Name = $1; Type = $3 } }
-
-args        : var_type                          { [ $1 ] }
-            | args COMMA var_type               { $3 :: $1 }
+args        : identifier                        { [ $1 ] }
+            | args COMMA identifier             { $3 :: $1 }
 
 entity_body : LEFT_BRACE rs_list RIGHT_BRACE    { List.rev $2 }
 
@@ -119,7 +118,7 @@ conjunction : identifier                        { [ RuleElem.Identifier $1 ] }
             | conjunction boolean_exp           { (RuleElem.BooleanExp $2) :: $1 }
 
 disjunction : conjunction                       { [ $1 ] }
-            | disjunction OP_OR conjunction     { $3 :: $1 }
+            | disjunction OP_DISJ conjunction   { $3 :: $1 }
 
 term        : identifier                        { Equation.Term (Term.Identifier $1) }
             | SINT64                            { Equation.Term (Term.Const $1) }
@@ -145,9 +144,9 @@ boolean_op  : OP_EQ                             { BoolOp.OpEq }
 
 boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  { ($2, $3, $4) }
 
-rule        : KW_RULE identifier LEFT_BRACE disjunction RIGHT_BRACE { Statement.Rule ($2, $4) }
+rule        : KW_RULE identifier COL disjunction SC { Statement.Rule ($2, $4) }
 
-state       : KW_STATE identifier LEFT_BRACE disjunction RIGHT_BRACE { Statement.State ($2, $4) }
+state       : KW_STATE identifier COL disjunction SC { Statement.State ($2, $4) }
 
 module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
 

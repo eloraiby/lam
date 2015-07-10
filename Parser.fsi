@@ -10,6 +10,7 @@ type token =
   | OP_XOR of (TokenInfo)
   | OP_OR of (TokenInfo)
   | OP_AND of (TokenInfo)
+  | OP_DISJ of (TokenInfo)
   | OP_MOD of (TokenInfo)
   | OP_DIV of (TokenInfo)
   | OP_MUL of (TokenInfo)
@@ -18,13 +19,11 @@ type token =
   | OP_LNOT of (TokenInfo)
   | OP_LOR of (TokenInfo)
   | OP_LAND of (TokenInfo)
-  | SET of (TokenInfo)
   | OP_GT of (TokenInfo)
   | OP_LT of (TokenInfo)
   | OP_EQ of (TokenInfo)
   | OP_GEQ of (TokenInfo)
   | OP_LEQ of (TokenInfo)
-  | YIELD of (TokenInfo)
   | SC of (TokenInfo)
   | DOT of (TokenInfo)
   | COL of (TokenInfo)
@@ -54,6 +53,7 @@ type tokenId =
     | TOKEN_OP_XOR
     | TOKEN_OP_OR
     | TOKEN_OP_AND
+    | TOKEN_OP_DISJ
     | TOKEN_OP_MOD
     | TOKEN_OP_DIV
     | TOKEN_OP_MUL
@@ -62,13 +62,11 @@ type tokenId =
     | TOKEN_OP_LNOT
     | TOKEN_OP_LOR
     | TOKEN_OP_LAND
-    | TOKEN_SET
     | TOKEN_OP_GT
     | TOKEN_OP_LT
     | TOKEN_OP_EQ
     | TOKEN_OP_GEQ
     | TOKEN_OP_LEQ
-    | TOKEN_YIELD
     | TOKEN_SC
     | TOKEN_DOT
     | TOKEN_COL
@@ -97,7 +95,6 @@ type nonTerminalId =
     | NONTERM_identifier
     | NONTERM_entity
     | NONTERM_entity_args
-    | NONTERM_var_type
     | NONTERM_args
     | NONTERM_entity_body
     | NONTERM_rs_list
