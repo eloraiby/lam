@@ -112,13 +112,16 @@ rs_list     :                                   { [] }
             | rs_list state                     { $2 :: $1 }
 
 
-conjunction : identifier                        { [ RuleElem.Identifier $1 ] }
-            | boolean_exp                       { [ RuleElem.BooleanExp $1 ] }
-            | conjunction identifier            { (RuleElem.Identifier $2) :: $1 }
-            | conjunction boolean_exp           { (RuleElem.BooleanExp $2) :: $1 }
+rule_elem   : identifier                        { RuleElem.Identifier $1 }
+            | boolean_exp                       { RuleElem.BooleanExp $1 }
+            | OP_LNOT identifier                { RuleElem.Negate (RuleElem.Identifier $2) }
+            | OP_LNOT boolean_exp               { RuleElem.Negate (RuleElem.BooleanExp $2) }
 
-disjunction : conjunction                       { [ $1 ] }
-            | disjunction OP_DISJ conjunction   { $3 :: $1 }
+conjunction : rule_elem                         { [ $1 ] }
+            | conjunction rule_elem             { $2 :: $1 }
+
+disjunction : conjunction                       { [ List.rev $1 ] }
+            | disjunction OP_DISJ conjunction   { (List.rev $3) :: $1 }
 
 term        : identifier                        { Equation.Term (Term.Identifier $1) }
             | SINT64                            { Equation.Term (Term.Const $1) }
@@ -144,9 +147,9 @@ boolean_op  : OP_EQ                             { BoolOp.OpEq }
 
 boolean_exp : LEFT_PAREN add_exp boolean_op add_exp RIGHT_PAREN  { ($2, $3, $4) }
 
-rule        : KW_RULE identifier COL disjunction SC { Statement.Rule ($2, $4) }
+rule        : KW_RULE identifier COL disjunction SC { Statement.Rule ($2, List.rev $4) }
 
-state       : KW_STATE identifier COL disjunction SC { Statement.State ($2, $4) }
+state       : KW_STATE identifier COL disjunction SC { Statement.State ($2, List.rev $4) }
 
 module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
 

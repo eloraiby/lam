@@ -80,12 +80,13 @@ type Equation =
     | Term  of Term
     | Operation of Equation * Operator * Equation
     | Negate of Equation
-
+ 
 type BooleanExp = Equation * BoolOp * Equation
 
 type RuleElem =
     | Identifier    of Identifier
     | BooleanExp    of BooleanExp
+    | Negate        of RuleElem
 
 type Conjunctions = RuleElem list
 type Disjunctions = Conjunctions list
