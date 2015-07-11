@@ -222,7 +222,7 @@ let trans : uint16[] array =
     (* State 92 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 92us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 92us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     |] 
-let actions : uint16[] = [|65535us; 0us; 1us; 1us; 0us; 65535us; 0us; 1us; 2us; 3us; 2us; 65535us; 0us; 1us; 40us; 3us; 17us; 18us; 27us; 27us; 20us; 27us; 27us; 27us; 27us; 40us; 40us; 13us; 14us; 40us; 26us; 19us; 21us; 40us; 25us; 27us; 28us; 29us; 30us; 31us; 32us; 33us; 34us; 35us; 36us; 37us; 38us; 39us; 40us; 27us; 65535us; 24us; 16us; 23us; 15us; 22us; 12us; 11us; 27us; 27us; 10us; 27us; 27us; 27us; 9us; 27us; 27us; 27us; 27us; 8us; 27us; 27us; 27us; 27us; 7us; 6us; 27us; 27us; 27us; 5us; 27us; 27us; 4us; 3us; 2us; 3us; 65535us; 2us; 65535us; 2us; 2us; 1us; 0us; |]
+let actions : uint16[] = [|65535us; 0us; 1us; 1us; 0us; 65535us; 0us; 1us; 2us; 3us; 2us; 65535us; 0us; 1us; 42us; 3us; 19us; 20us; 29us; 29us; 22us; 29us; 29us; 29us; 29us; 13us; 14us; 15us; 16us; 42us; 28us; 21us; 23us; 42us; 27us; 29us; 30us; 31us; 32us; 33us; 34us; 35us; 36us; 37us; 38us; 39us; 40us; 41us; 42us; 29us; 65535us; 26us; 18us; 25us; 17us; 24us; 12us; 11us; 29us; 29us; 10us; 29us; 29us; 29us; 9us; 29us; 29us; 29us; 29us; 8us; 29us; 29us; 29us; 29us; 7us; 6us; 29us; 29us; 29us; 5us; 29us; 29us; 4us; 3us; 2us; 3us; 65535us; 2us; 65535us; 2us; 2us; 1us; 0us; |]
 let _fslex_tables = Microsoft.FSharp.Text.Lexing.UnicodeTables.Create(trans,actions)
 let rec _fslex_dummy () = _fslex_dummy() 
 (* Rule read *)
@@ -301,185 +301,195 @@ and _fslex_read filename istream _fslex_state lexbuf =
           )
   | 13 -> ( 
 # 62 "Lexer.fsl"
-                                     OP_EQ       (position(filename, lexbuf.EndPos)) 
+                                     OP_LT       (position(filename, lexbuf.EndPos)) 
 # 305 "Lexer.fs"
           )
   | 14 -> ( 
-# 64 "Lexer.fsl"
-                                     OP_LNOT     (position(filename, lexbuf.EndPos)) 
+# 63 "Lexer.fsl"
+                                     OP_GT       (position(filename, lexbuf.EndPos)) 
 # 310 "Lexer.fs"
           )
   | 15 -> ( 
-# 65 "Lexer.fsl"
-                                     OP_LAND     (position(filename, lexbuf.EndPos)) 
+# 64 "Lexer.fsl"
+                                     OP_EQ       (position(filename, lexbuf.EndPos)) 
 # 315 "Lexer.fs"
           )
   | 16 -> ( 
 # 66 "Lexer.fsl"
-                                     OP_LOR      (position(filename, lexbuf.EndPos)) 
+                                     OP_LNOT     (position(filename, lexbuf.EndPos)) 
 # 320 "Lexer.fs"
           )
   | 17 -> ( 
-# 68 "Lexer.fsl"
-                                     OP_ADD      (position(filename, lexbuf.EndPos)) 
+# 67 "Lexer.fsl"
+                                     OP_LAND     (position(filename, lexbuf.EndPos)) 
 # 325 "Lexer.fs"
           )
   | 18 -> ( 
-# 69 "Lexer.fsl"
-                                     OP_SUB      (position(filename, lexbuf.EndPos)) 
+# 68 "Lexer.fsl"
+                                     OP_LOR      (position(filename, lexbuf.EndPos)) 
 # 330 "Lexer.fs"
           )
   | 19 -> ( 
 # 70 "Lexer.fsl"
-                                     OP_MUL      (position(filename, lexbuf.EndPos)) 
+                                     OP_ADD      (position(filename, lexbuf.EndPos)) 
 # 335 "Lexer.fs"
           )
   | 20 -> ( 
 # 71 "Lexer.fsl"
-                                     OP_DIV      (position(filename, lexbuf.EndPos)) 
+                                     OP_SUB      (position(filename, lexbuf.EndPos)) 
 # 340 "Lexer.fs"
           )
   | 21 -> ( 
 # 72 "Lexer.fsl"
-                                     OP_MOD      (position(filename, lexbuf.EndPos)) 
+                                     OP_MUL      (position(filename, lexbuf.EndPos)) 
 # 345 "Lexer.fs"
           )
   | 22 -> ( 
-# 74 "Lexer.fsl"
-                                     OP_AND      (position(filename, lexbuf.EndPos)) 
+# 73 "Lexer.fsl"
+                                     OP_DIV      (position(filename, lexbuf.EndPos)) 
 # 350 "Lexer.fs"
           )
   | 23 -> ( 
-# 75 "Lexer.fsl"
-                                     OP_OR       (position(filename, lexbuf.EndPos)) 
+# 74 "Lexer.fsl"
+                                     OP_MOD      (position(filename, lexbuf.EndPos)) 
 # 355 "Lexer.fs"
           )
   | 24 -> ( 
 # 76 "Lexer.fsl"
-                                     OP_XOR      (position(filename, lexbuf.EndPos)) 
+                                     OP_AND      (position(filename, lexbuf.EndPos)) 
 # 360 "Lexer.fs"
           )
   | 25 -> ( 
 # 77 "Lexer.fsl"
-                                     OP_NOT      (position(filename, lexbuf.EndPos)) 
+                                     OP_OR       (position(filename, lexbuf.EndPos)) 
 # 365 "Lexer.fs"
           )
   | 26 -> ( 
-# 79 "Lexer.fsl"
-                                     OP_DISJ     (position(filename, lexbuf.EndPos)) 
+# 78 "Lexer.fsl"
+                                     OP_XOR      (position(filename, lexbuf.EndPos)) 
 # 370 "Lexer.fs"
           )
   | 27 -> ( 
-# 81 "Lexer.fsl"
-                                     IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) 
+# 79 "Lexer.fsl"
+                                     OP_NOT      (position(filename, lexbuf.EndPos)) 
 # 375 "Lexer.fs"
           )
   | 28 -> ( 
-# 82 "Lexer.fsl"
-                                     read_string filename istream "" false lexbuf 
+# 81 "Lexer.fsl"
+                                     OP_DISJ     (position(filename, lexbuf.EndPos)) 
 # 380 "Lexer.fs"
           )
   | 29 -> ( 
 # 83 "Lexer.fsl"
-                                     LEFT_BRACE  (position(filename, lexbuf.EndPos)) 
+                                     IDENTIFIER  (lexeme lexbuf, position(filename, lexbuf.EndPos)) 
 # 385 "Lexer.fs"
           )
   | 30 -> ( 
 # 84 "Lexer.fsl"
-                                     RIGHT_BRACE (position(filename, lexbuf.EndPos)) 
+                                     read_string filename istream "" false lexbuf 
 # 390 "Lexer.fs"
           )
   | 31 -> ( 
 # 85 "Lexer.fsl"
-                                     LEFT_BRACK  (position(filename, lexbuf.EndPos)) 
+                                     LEFT_BRACE  (position(filename, lexbuf.EndPos)) 
 # 395 "Lexer.fs"
           )
   | 32 -> ( 
 # 86 "Lexer.fsl"
-                                     RIGHT_BRACK (position(filename, lexbuf.EndPos)) 
+                                     RIGHT_BRACE (position(filename, lexbuf.EndPos)) 
 # 400 "Lexer.fs"
           )
   | 33 -> ( 
 # 87 "Lexer.fsl"
-                                     LEFT_PAREN  (position(filename, lexbuf.EndPos)) 
+                                     LEFT_BRACK  (position(filename, lexbuf.EndPos)) 
 # 405 "Lexer.fs"
           )
   | 34 -> ( 
 # 88 "Lexer.fsl"
-                                     RIGHT_PAREN (position(filename, lexbuf.EndPos)) 
+                                     RIGHT_BRACK (position(filename, lexbuf.EndPos)) 
 # 410 "Lexer.fs"
           )
   | 35 -> ( 
 # 89 "Lexer.fsl"
-                                     SC          (position(filename, lexbuf.EndPos)) 
+                                     LEFT_PAREN  (position(filename, lexbuf.EndPos)) 
 # 415 "Lexer.fs"
           )
   | 36 -> ( 
 # 90 "Lexer.fsl"
-                                     COMMA       (position(filename, lexbuf.EndPos)) 
+                                     RIGHT_PAREN (position(filename, lexbuf.EndPos)) 
 # 420 "Lexer.fs"
           )
   | 37 -> ( 
 # 91 "Lexer.fsl"
-                                     DOT         (position(filename, lexbuf.EndPos)) 
+                                     SC          (position(filename, lexbuf.EndPos)) 
 # 425 "Lexer.fs"
           )
   | 38 -> ( 
 # 92 "Lexer.fsl"
-                                     COL         (position(filename, lexbuf.EndPos)) 
+                                     COMMA       (position(filename, lexbuf.EndPos)) 
 # 430 "Lexer.fs"
           )
   | 39 -> ( 
 # 93 "Lexer.fsl"
-                                     EOF 
+                                     DOT         (position(filename, lexbuf.EndPos)) 
 # 435 "Lexer.fs"
           )
   | 40 -> ( 
 # 94 "Lexer.fsl"
-                                     raise (Exception (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.EndPos.Line) lexbuf.EndPos.Column)) 
+                                     COL         (position(filename, lexbuf.EndPos)) 
 # 440 "Lexer.fs"
+          )
+  | 41 -> ( 
+# 95 "Lexer.fsl"
+                                     EOF 
+# 445 "Lexer.fs"
+          )
+  | 42 -> ( 
+# 96 "Lexer.fsl"
+                                     raise (Exception (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.EndPos.Line) lexbuf.EndPos.Column)) 
+# 450 "Lexer.fs"
           )
   | _ -> failwith "read"
 (* Rule read_string *)
 and _fslex_read_string filename istream str ignorequote _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 98 "Lexer.fsl"
+# 100 "Lexer.fsl"
                                      if ignorequote then (read_string filename istream (str+"\\\"") false lexbuf)
                                      else (STRING (Constant.ConstString(str, position(filename, lexbuf.EndPos)))) 
-# 450 "Lexer.fs"
-          )
-  | 1 -> ( 
-# 100 "Lexer.fsl"
-                                     read_string filename istream str true lexbuf 
-# 455 "Lexer.fs"
-          )
-  | 2 -> ( 
-# 101 "Lexer.fsl"
-                                     read_string filename istream (str + (lexeme lexbuf)) false lexbuf 
 # 460 "Lexer.fs"
           )
-  | 3 -> ( 
+  | 1 -> ( 
 # 102 "Lexer.fsl"
-                                     raise (Exception ("String is not terminated")) 
+                                     read_string filename istream str true lexbuf 
 # 465 "Lexer.fs"
+          )
+  | 2 -> ( 
+# 103 "Lexer.fsl"
+                                     read_string filename istream (str + (lexeme lexbuf)) false lexbuf 
+# 470 "Lexer.fs"
+          )
+  | 3 -> ( 
+# 104 "Lexer.fsl"
+                                     raise (Exception ("String is not terminated")) 
+# 475 "Lexer.fs"
           )
   | _ -> failwith "read_string"
 (* Rule read_line_comment *)
 and _fslex_read_line_comment filename istream _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 106 "Lexer.fsl"
+# 108 "Lexer.fsl"
                                      read filename istream lexbuf 
-# 474 "Lexer.fs"
+# 484 "Lexer.fs"
           )
   | 1 -> ( 
-# 107 "Lexer.fsl"
+# 109 "Lexer.fsl"
                                      read_line_comment filename istream lexbuf 
-# 479 "Lexer.fs"
+# 489 "Lexer.fs"
           )
   | _ -> failwith "read_line_comment"
 
-# 108 "Lexer.fsl"
+# 110 "Lexer.fsl"
   
 # 3000000 "Lexer.fs"

@@ -59,6 +59,8 @@ rule read filename istream =
 
     | "<="          { OP_LEQ      (position(filename, lexbuf.EndPos)) }
     | ">="          { OP_GEQ      (position(filename, lexbuf.EndPos)) }
+    | "<"           { OP_LT       (position(filename, lexbuf.EndPos)) }
+    | ">"           { OP_GT       (position(filename, lexbuf.EndPos)) }
     | "="           { OP_EQ       (position(filename, lexbuf.EndPos)) }
 
     | "!"           { OP_LNOT     (position(filename, lexbuf.EndPos)) }

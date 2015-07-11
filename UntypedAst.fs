@@ -79,6 +79,7 @@ type Term   =
 type Equation =
     | Term  of Term
     | Operation of Equation * Operator * Equation
+    | Function of Identifier * Equation list
     | Negate of Equation
  
 type BooleanExp = Equation * BoolOp * Equation

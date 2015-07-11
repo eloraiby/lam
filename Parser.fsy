@@ -104,9 +104,17 @@ args        : identifier                        { [ $1 ] }
             | args COMMA identifier             { $3 :: $1 }
 
 entity_body : LEFT_BRACE rs_list RIGHT_BRACE    { List.rev $2 }
+            | LEFT_BRACE RIGHT_BRACE            { [] }
 
-rs_list     :                                   { [] }
-            | rule                              { [ $1 ] }
+
+func_args   : add_exp                           { [ $1 ] }
+            | func_args COMMA add_exp           { $3 :: $1 }
+
+func        : identifier LEFT_PAREN func_args RIGHT_PAREN { Equation.Function ($1, $3) }
+            | identifier LEFT_PAREN RIGHT_PAREN { Equation.Function ($1, []) }
+
+
+rs_list     : rule                              { [ $1 ] }
             | state                             { [ $1 ] }
             | rs_list rule                      { $2 :: $1 }
             | rs_list state                     { $2 :: $1 }
@@ -124,6 +132,7 @@ disjunction : conjunction                       { [ List.rev $1 ] }
             | disjunction OP_DISJ conjunction   { (List.rev $3) :: $1 }
 
 term        : identifier                        { Equation.Term (Term.Identifier $1) }
+            | func                              { $1 }
             | SINT64                            { Equation.Term (Term.Const $1) }
             | REAL64                            { Equation.Term (Term.Const $1) }
             | LEFT_PAREN add_exp RIGHT_PAREN    { $2 }
@@ -153,10 +162,10 @@ state       : KW_STATE identifier COL disjunction SC { Statement.State ($2, List
 
 module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
 
-module_body : LEFT_BRACE entities RIGHT_BRACE  { List.rev $2 }
+module_body : LEFT_BRACE entities RIGHT_BRACE   { List.rev $2 }
+            | LEFT_BRACE RIGHT_BRACE            { [] }
 
-entities    :                                   { [] }
-            | entity                            { [ Declaration.Entity $1 ] }
+entities    : entity                            { [ Declaration.Entity $1 ] }
             | entities entity                   { (Declaration.Entity $2) :: $1 }
 
 module_list : module                            { [ $1 ]}
