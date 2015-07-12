@@ -7,9 +7,9 @@ entity Entity (in0, in1, in2) {
              | rule7 !rule8 rule7
              ;
 
-    rule R0 : !rule1 rule2 rule3
-            |  rule4
-            ;
+    rule R0  : !rule1 rule2 rule3
+             |  rule4
+             ;
 }
 
 }

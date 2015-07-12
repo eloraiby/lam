@@ -40,7 +40,7 @@ let identifier  = (alpha | special) (alpha | special | digit)*
 let floatp  = digit+ '.' digit*
 let floate  = digit+ ('.' digit* )? ('e'| 'E') ['+' '-']? digit+
 let real64  = ['-' '+']? (floatp | floate)
-let white	= [' ' '\t']+
+let white   = [' ' '\t']+
 let newline = '\n' | ('\r' '\n')
 
 rule read filename istream =

@@ -80,8 +80,8 @@ open System
 
 %token EOF
 
-%type <Declaration list>    start
-%type <Declaration>         module
+%type <Module list>         start
+%type <Module>              module
 %type <Conjunctions>        conjunction
 %type <Equation>            mul_exp
 %type <Equation>            add_exp
@@ -160,13 +160,13 @@ rule        : KW_RULE identifier COL disjunction SC { Statement.Rule ($2, List.r
 
 state       : KW_STATE identifier COL disjunction SC { Statement.State ($2, List.rev $4) }
 
-module      : KW_MODULE identifier module_body  { Declaration.Module ($2, $3) }
+module      : KW_MODULE identifier module_body  { { Module.Name = $2; Entities = $3 } }
 
 module_body : LEFT_BRACE entities RIGHT_BRACE   { List.rev $2 }
             | LEFT_BRACE RIGHT_BRACE            { [] }
 
-entities    : entity                            { [ Declaration.Entity $1 ] }
-            | entities entity                   { (Declaration.Entity $2) :: $1 }
+entities    : entity                            { [ $1 ] }
+            | entities entity                   { $2 :: $1 }
 
 module_list : module                            { [ $1 ]}
             | module_list module                { $2 :: $1 }

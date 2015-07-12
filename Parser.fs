@@ -390,7 +390,7 @@ let _fsyacc_immediateActions = [|65535us; 49152us; 16385us; 16386us; 65535us; 16
 let _fsyacc_reductions ()  =    [| 
 # 391 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Declaration list)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Module list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
@@ -407,7 +407,7 @@ let _fsyacc_reductions ()  =    [|
                                                                        _1 
                    )
 # 92 "Parser.fsy"
-                 : Declaration list));
+                 : Module list));
 # 411 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
@@ -983,10 +983,10 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 163 "Parser.fsy"
-                                                                       Declaration.Module (_2, _3) 
+                                                                       { Module.Name = _2; Entities = _3 } 
                    )
 # 163 "Parser.fsy"
-                 : Declaration));
+                 : Module));
 # 990 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : TokenInfo)) in
@@ -1019,7 +1019,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 168 "Parser.fsy"
-                                                                       [ Declaration.Entity _1 ] 
+                                                                       [ _1 ] 
                    )
 # 168 "Parser.fsy"
                  : 'entities));
@@ -1031,13 +1031,13 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 169 "Parser.fsy"
-                                                                       (Declaration.Entity _2) :: _1 
+                                                                       _2 :: _1 
                    )
 # 169 "Parser.fsy"
                  : 'entities));
 # 1038 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Declaration)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Module)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
@@ -1049,7 +1049,7 @@ let _fsyacc_reductions ()  =    [|
 # 1049 "Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'module_list)) in
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Declaration)) in
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Module)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
@@ -1081,5 +1081,5 @@ let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> =
     numTerminals = 45;
     productionToNonTerminalTable = _fsyacc_productionToNonTerminalTable  }
 let engine lexer lexbuf startState = (tables ()).Interpret(lexer, lexbuf, startState)
-let start lexer lexbuf : Declaration list =
+let start lexer lexbuf : Module list =
     Microsoft.FSharp.Core.Operators.unbox ((tables ()).Interpret(lexer, lexbuf, 0))

@@ -102,9 +102,11 @@ type Entity = {
     Statements  : Statement list
 }
 
-type Declaration =
-    | Entity    of Entity
-    | Module    of Identifier * (Declaration list)
+type Module = {
+    Name        : Identifier
+    Entities    : Entity list
+}
+
 
 
 
