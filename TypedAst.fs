@@ -20,6 +20,20 @@ module TypedAst
 open System
 open UntypedAst
 
+type Result<'R> =
+    | Success of 'R
+    | Failure of string list // error list
+with
+    member x.AddSuccess (su : 'R -> 'R) =
+        match x with
+        | Success s -> Success (su s)
+        | Failure _ -> x
+
+    member x.AddFailure f =
+        match x with
+        | Success s  -> Failure [ f ]
+        | Failure fl -> Failure (f :: fl)
+
 type State = {
     Name    : string
     Clauses : Clause list
@@ -40,11 +54,38 @@ and LogNode =
 
 and Clause = LogNode list
 
+let getDisjunctionsIdentifiers (disj: UntypedAst.Disjunctions) : Result<string list> =
+    let getConjunctionsIdentifiers (conj: UntypedAst.Conjunctions) : Result<string list> =
+        conj
+        |> List.fold
+            (fun (state: Result<string list>) re ->
+                match re with
+                | RuleElem.Identifier    ident -> state.AddSuccess (fun s -> fst ident :: s)
+                | RuleElem.BooleanExp    b     -> state.AddFailure (sprintf "boolean expressions not supported yet")
+                | RuleElem.Negate        re    ->
+                    match re with
+                    | RuleElem.Identifier ident -> state.AddSuccess (fun s -> fst ident :: s)
+                    | _                         -> state.AddFailure (sprintf "negation is only supported on identifier")) (Result.Success [])
+    
+    let mergeResult (a: Result<string list>, b: Result<string list>) =
+        match a, b with
+        | Success sa, Success sb -> Success (sa |> List.append sb)
+        | Failure fa, Failure fb -> Failure (fa |> List.append fb)
+        | Success _, Failure _ -> b
+        | Failure _, Success _ -> a
+
+    disj
+    |> List.fold (fun s d -> mergeResult(s, getConjunctionsIdentifiers d)) (Result.Success [])
+
+(*
 type State
 with
-    static member from (identifier, disjunctions) : State =
+    static member from (identifier: UntypedAst.Identifier, disjunctions: UntypedAst.Disjunctions) : State =
+        let identifiers = getDisjunnctionsIdentifiers disjunctions
+
         { Name      = fst identifier
-          Clauses   = }
+          Clauses   = clauses }
+*)
 
 type Entity = {
     Name    : string
@@ -58,7 +99,31 @@ type Entity = {
             |> List.map fst
             |> Set.ofList
 
-        let 
+        let stateNames, ruleNames  =
+            e.Statements
+            |> List.fold
+                (fun (s, r) stmt ->
+                    match stmt with
+                    | Statement.State (name, _) -> ((fst name) :: s, r) 
+                    | Statement.Rule  (name, _) -> (s, (fst name) :: r)) ([], [])
+
+        // check for duplicate state names and rules (and cross duplication)
+        let stateSet = stateNames |> Set.ofList
+        let ruleSet  = ruleNames  |> Set.ofList
+
+        if stateSet.Count <> stateNames.Length
+        then    // some states are duplicated. Find them!
+            let dups =
+                stateNames
+                |> List.fold
+                    (fun (state: Map<string, int>) (n: string) ->
+                        match state.TryFind n with
+                        | Some s -> state.Add(n, s + 1)
+                        | None   -> state.Add(n, 1)) Map.empty
+            dups
+            |> Map.filter(fun k v -> v > 1)
+            |> Map.iter(fun k v -> printfn "state %s is duplicated" k)
+
         { Name   = fst e.Name
           Inputs = inputs
           States = states
